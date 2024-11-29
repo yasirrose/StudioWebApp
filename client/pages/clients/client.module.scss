@@ -1,0 +1,93 @@
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+/* Dropdown button */
+.dropdownButton {
+  background-color: #f9f9f9;
+  color: #252f4a;
+  padding: 8px 16px;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  white-space: nowrap;
+  .dropdownIcon{
+    margin-left: 3px;
+    font-size: 10px;
+  }
+  &:hover{
+    color: #17c653;
+    background-color: #dfffea;
+  }
+  &.darkButton{
+    background: #1b1c22;
+    color: #fff;
+  }
+}
+.dropdown:hover .dropdownContent {
+  display: block;
+}
+
+.dropdownContent{
+  display: none;
+  position: fixed;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+  border-radius: 4px;
+  overflow: hidden;
+  text-align: left;
+  padding: 8px;
+  button {
+    color: black;
+    padding: 8px 10px;
+    text-decoration: none;
+    display: block;
+    width: 100%;
+    background: none;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    border-radius: 6px;
+    font-size: 12px;
+    &:hover{
+      background: #70e999 !important;
+      color: #333;
+    }
+    &.deleteButton{
+      &:hover{
+        background: #f8d7da !important;
+        color: #721c24;
+      }
+    }
+  }
+  &.darkDropdown{
+    background: #1b1c22;
+    .darkViewButton, .darkDeleteButton, .darkToggleButton{
+      background: #1b1c22;
+      color: #fff;
+    }
+  }
+}
+
+.dropdownContent button:hover {
+  background-color: #ddd;
+}
+
+.viewButton:hover {
+  background-color: #e0e0e0;
+}
+
+.deleteButton:hover {
+  background-color: #ffcccc;
+}
+
+.activateButton:hover {
+  background-color: #ccffcc;
+}
+
+.deactivateButton:hover {
+  background-color: #ffebcc;
+}

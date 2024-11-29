@@ -1,0 +1,12 @@
+.appFooter{
+    background: #fbfbfb;
+    &.darkMode{
+        background: #0f1014;
+        span{
+            color: #636674 !important;
+        }
+        a{
+            color: #b5b7c8 !important;
+        }
+    }
+}

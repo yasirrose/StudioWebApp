@@ -1,0 +1,498 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+body{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Inter", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.btn.btn-primary {
+  color: #fff;
+  border-color: var(--bs-primary);
+  background-color: var(--bs-primary);
+  font-weight: 600;
+}
+.btn.btn-primary:hover:not(.btn-active), .btn.btn-primary:focus:not(.btn-active){
+  color: #fff;
+  border-color: #04b440;
+  background-color: #04b440 !important;
+}
+.btn.btn-active-light-primary:hover:not(.btn-active){
+  background-color: #dfffea !important;
+  color: var(--bs-primary);
+}
+
+button.btn.btn-danger {
+  color: #fff;
+  background-color: #f8285a;
+  border: 1px solid #f8285a;
+}
+button.btn.btn-danger:hover{
+  color: #fff;
+  background-color: #f8285a;
+  border: 1px solid #f8285a;
+  opacity: 0.8;
+}
+
+.card-toolbar{
+  .btn-light-primary{
+    background: #dfffea;
+    &:hover{
+      color: #fff !important;
+    }
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  html {
+    color-scheme: dark;
+  }
+}
+
+.signin-screen {
+  height: 100vh;
+  display: flex !important;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+    background-color: var(--bs-primary) !important;
+  h1{
+    font-size: 30px;
+  }
+  .btn{
+    &.btn-primary{
+      color: #fff;
+      font-weight: bold;
+      font-size: 16px;
+      &:hover{
+        background: #17c653 !important;
+        color: #fff !important;
+        opacity: 0.8;
+      }
+    }
+  }
+}
+
+
+.auth-page{
+  &.darkMode{
+    .signin-screen{
+      background-color: #0f1014 !important;
+      h1{
+        color: #fff !important;
+      }
+      .text-gray-500{
+        color: #636674 !important;
+      }
+      input{
+        border: 1px solid #363843 !important;
+        color: #fff;
+        box-shadow: none;
+      }
+      .bg-body.w-md-600px {
+        background: #15171c !important;
+        border: 1px solid #1e2027 !important;
+      }
+    }
+  }
+}
+
+
+.dropdown-container {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-button {
+  background-color: #007bff;
+  color: white;
+  padding: 8px;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f1f1f1;
+  min-width: 120px;
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+}
+
+.dropdown-content div {
+  color: black;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.dropdown-content div:hover {
+  background-color: #ddd;
+}
+
+.dropdown-container:hover .dropdown-content {
+  display: block;
+}
+.check-icon svg {
+  color: #17c653 !important;
+}
+.menu-item .menu-content {
+  border-bottom: 1px solid #dbdfe9;
+}
+.badge-light-success {
+  background-color: #e9f3ff;
+}
+.search-field{
+  svg{
+    color: #99a1b7;
+    font-size: 14px;
+    margin-left: 10px;
+  }
+  input {
+    padding-left: 30px !important;
+    box-shadow: none !important;
+  }
+}
+.badge-light-success {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.badge-light-danger {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+.content-section {
+  min-height: calc(100vh - 145px);
+  .app-content {
+    background: #fbfbfb;
+    .card{
+      background: #fff;
+      .card-header{
+        display: flex;
+        justify-content: space-between;
+        align-items: stretch;
+        flex-wrap: wrap;
+        min-height: 70px;
+        padding: 0 2.25rem;
+        border-bottom: 1px solid #f1f1f4;
+        margin-bottom: 15px;
+      }
+      .card-body{
+        padding: 2rem 2.25rem;
+      }
+      &.signin-method{
+        padding: 0;
+        .card-header{
+          margin: 0;
+        }
+      }
+    }
+  }
+}
+.main-screen {
+  display: flex;
+  &.no-sidebar-header{
+    .main-content{
+      margin-left: 0;
+      width: 100%; 
+    }
+  }
+  .main-content {
+    margin-left: 280px;
+    width: calc(100% - 280px);
+    transition: margin-left 0.2s;
+    &.collapsed {
+      margin-left: 80px;
+      transition: margin-left 0.5s;
+      width: calc(100% - 80px);
+    }
+  }
+  &.darkMode{
+    background: #0f1014;
+    h1, h2, h3, h4, h5, a, p, label, span{
+      color: #fff !important;
+      &.btn.btn-light{
+        color: inherit !important;
+        background: #fff !important;
+      }
+    }
+    ul{
+      &.breadcrumb{
+        li{
+          color: #636674 !important;
+          a, span{
+            color: #636674 !important;
+          }
+        }
+      }
+    }
+    
+    .badge-light-success {
+      background-color: #172331;
+      color: #006ae6;
+    }
+    .search-field{
+      input{
+        border: 1px solid #fff !important;
+        background: transparent;
+        color: #fff;
+      }
+    }
+    .card {
+      background: #15171c;
+      border: 1px solid #1e2027;
+      padding: 0 20px 20px;
+      .rdt_TableRow, .rdt_TableHeadRow, .rdt_Pagination {
+        background: #15171c !important;
+        color: #fff;
+        border: 1px dashed #26272F !important;
+        outline: none;
+        svg, button{
+          fill: #fff;
+        }
+      }
+      &.signin-method{
+        .card-body{
+          .form-text{
+            color: #808290;
+          }
+          .method-content{
+            p{
+              color: #fff;
+            }
+            span{
+              color: #808290 !important;
+            }
+          }
+          .ms-auto{
+            .btn{
+                color: #808290;
+                background-color: #1b1c22;
+                &:hover{
+                    color: #00a261;
+                    background-color: #1b1c22 !important;
+                }
+            }
+          }
+          .separator{
+            border-bottom-color: #363843;
+          }
+        }
+      }
+    }
+    .Scheduler{
+        border-color: #26272F !important;
+        div, a{
+        color: #fff !important;
+        border-color: #26272F !important;
+        .MuiButtonBase-root{
+            span{
+                background: transparent;
+            }
+        }
+        span{
+            background: #15171c;
+            color: inherit !important;
+            border-color: #26272F !important;
+        }
+        }
+    }
+    div > div > .MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded {
+      background: #15171c;
+      a, button{
+            color: #fff !important;
+        svg{
+            color: #fff !important;
+        }
+      }
+    }
+    .image-input{
+      &.image-input-outline{
+        .image-input-wrapper{
+          border: 3px solid #15171c;
+          box-shadow: 0 0.5rem 1.5rem 0.5rem rgba(0, 0, 0, 0.075);
+        }
+      }
+    }
+    input, select, textarea{
+      background-color: transparent !important;
+      border-color: #26272f !important;
+      color: #9a9cae !important;
+      transition: color .2s ease;
+      &.form-check-input[type=checkbox]{
+        background-color: #26272f !important;
+      }
+    }
+    .modal-header, .modal-footer{
+      border-color: #1e2027;
+      .close-btn{
+        color: #fff !important;
+      }
+    }
+    .modal-content{
+      background: #15171c;
+    }
+    .badge-light-danger{
+      background: #c93636;
+    }
+    .content-section{
+      .app-content {
+        background: #0f1014;
+      }
+    }
+    .content-section{
+      .app-content {
+        .card {
+          .card-header{
+            border-color: #1e2027;
+          }
+        }
+      }
+    }
+    .Scheduler {
+      .fc {
+        .fc-button-primary{
+          background: #1b1c22 !important;
+          span{
+            background: #1b1c22 !important;
+            color: #808290 !important;
+          }
+          &:hover{
+            span{
+              color: #f5f5f5 !important;
+            }
+          }
+          &.fc-button-active{
+            background: #26272f !important;
+            color: #f5f5f5 !important;
+          }
+        }
+        &.fc-theme-standard{
+          td, th, .fc-scrollgrid{
+            border-color: #26272f;
+          }
+        }
+      }
+    }
+    input[type="date"]::-webkit-calendar-picker-indicator, input[type="time"]::-webkit-calendar-picker-indicator {
+      filter: invert(1); /* Inverts the color to make it white in dark mode */
+      opacity: 0.6; /* Adjust opacity if needed */
+    }
+    input[type="date"]::-moz-calendar-picker-indicator, input[type="time"]::-moz-calendar-picker-indicator {
+        filter: invert(1);
+        opacity: 0.6;
+    }
+  }
+}
+.modal-header h2{
+  margin: 0;
+}
+.modal-body .form-group label {
+  margin-bottom: 10px;
+}
+.calendar-screen{
+  .card{
+    position: relative;
+    z-index: 1;
+  }
+}
+
+.card{
+  .card-header, .card-body{
+    padding: 0;
+  }
+}
+
+.Scheduler{
+  .fc-theme-standard {
+    th {
+      th{
+        div{
+          padding: 0.75rem .5rem;
+        }
+      }
+    }
+  }
+  .fc{
+    .fc-button-primary {
+      background-color: #f9f9f9 !important;
+      color: #78829d !important;
+      padding: 9px 14.5px;
+      border: 0;
+      box-shadow: none !important;
+      &.fc-button-active{
+        background: #f1f1f4 !important;
+        color: #071437 !important;
+      }
+    }
+    .fc-col-header-cell-cushion {
+      display: inline-block;
+      padding: 2px 4px;
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: #252f4a;
+    }
+    &.fc-theme-standard{
+      td, th, .fc-scrollgrid{
+        border-color: #f1f1f4;
+      }
+      .fc-scrollgrid{
+        border-radius: .475rem;
+      }
+    }
+  }
+}
+
+.text-danger {
+  color: red !important;
+  font-size: 0.875em;
+  margin-top: 0.25em;
+}
+.is-invalid {
+  border-color: #e74a3b !important;
+  // box-shadow: 0 0 5px rgba(231, 74, 59, 0.5) !important;
+}
+.data-table-view .badge.badge-warning-light {
+  background-color: #ecd78b !important;
+}
+.data-table-view .badge.badge-info-light {
+  background-color: #b292f6 !important;
+}
+.data-table-view .badge.badge-primary-light {
+  background-color: #b8dec5 !important;
+}
+
+.reset-password, .edit-change-email {
+  width: 100%;
+}

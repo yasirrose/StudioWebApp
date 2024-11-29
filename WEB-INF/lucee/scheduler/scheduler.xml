@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?><schedule>
+<task autoDelete="false" hidden="false" interval="120" name="FetchAsanaTasks" paused="true" port="80" proxyHost="" proxyPassword="" proxyPort="0" proxyUser="" publish="false" readonly="false" resolveUrl="false" startDate="{d '2024-11-15'}" startTime="{t '00:02:00'}" timeout="650000" unique="false" url="http://studiowebapp-dev3.local:80/services/asana/fetchTasks.cfm"/></schedule>

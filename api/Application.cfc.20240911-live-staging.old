@@ -1,0 +1,392 @@
+<cfcomponent extends="taffy.core.api">
+	<cfscript>
+
+		this.utils = createObject("component", "../../../ApplicationUtils.cfc");
+
+
+		//shares name with /SmartGate/Application.cfc so APPLICATION scope is shared as well
+		this.name = "1i00";
+
+		this.mappings["/resources"] = listDeleteAt(cgi.script_name, listLen(cgi.script_name, "/"), "/") & "/resources";
+		this.mappings["/core"] = listDeleteAt(cgi.script_name, listLen(cgi.script_name, "/"), "/") & "/core";
+
+		variables.framework = {};
+		variables.framework.debugKey = "debug";
+		variables.framework.reloadKey = "reload";
+		variables.framework.reloadPassword = "true";
+		//variables.framework.reloadOnEveryRequest = true;
+		variables.framework.serializer = "taffy.core.nativeJsonSerializer";
+		variables.framework.returnExceptionsAsJson = true;
+		variables.framework.globalHeaders = {
+			"TrySkipIisCustomErrors": false,
+		};
+
+		function onApplicationStart(){
+			writeLog('1i00 api onApplicationStart');
+			include "../../../Mixin/common_application_init.inc";
+			return super.onApplicationStart();
+		}
+
+		function onRequestStartMinimal(TARGETPATH){
+			writeLog('1i00 api onRequestStartMinimal');
+
+			include "../../../Mixin/common_request_init.inc";
+
+			if(not isDefined("session.library_context") and isDefined("session.libraryid") and isNumeric(session.libraryid)){
+				core_library = CreateObject("component", "core.library");
+				session.library_context = core_library.getInternalContext(session.libraryid);
+			}
+
+			return super.onRequestStart(TARGETPATH);
+		} 
+
+		function onRequestStart(TARGETPATH){
+			LOCAL.on_request_start_tickcount = gettickcount();
+			writeLog('1i00 api onRequestStart');
+
+			if(structKeyExists(request, "standardBodyOnloadFunctions")) {
+				request.standardBodyOnloadFunctions = "";
+			}     
+
+			include "../../../Mixin/common_request_init.inc";
+
+			
+
+
+			if (cgi.request_method == "GET" && urlDecode(cgi.query_string) contains "/auth/login") {
+				core_library = createObject("component","core.library");
+				removedWWWServerName = ReplaceNoCase(cgi.server_name, "www.", "");
+				session.libraryid = core_library.getIdFromUrl(removedWWWServerName);
+				
+				if (!isDefined("session.library_context") and isDefined("session.libraryid") and isNumeric(session.libraryid)){
+					session.library_context = core_library.getInternalContext(session.libraryid);
+				}
+			}
+			include "../../../Applications/1i00/_lib/ok_tickmeter_declare_tickmeter.inc";
+	
+	
+			<!--- You can refresh the 1i00 application by appending ?refresh to the querystring --->
+			request.alreadyRunThisOnce = request.alreadyRunThisOnce ?: 0;
+			if ( structKeyExists(URL, "refresh") EQ true) {
+				request.alreadyRunThisOnce = 1;
+			}
+	
+			<!--- Security fileto attempt to stop hackers using SQL Injections, etc. --->
+			include "../../../../../this_server_settings/this_server_settings_security.inc";
+	
+	
+			<!--- Added missing dsns definition --->
+			// if(not IsDefined("request.dsns")) {
+			//     request.dsns = structNew();
+			// }
+			// request.dsns.onei00MainDB = "1i00_Central";
+			// request.dsns.onei00DB = request.dsns.onei00MainDB;
+			// request.dsns.SmartGateDB = "1i00_SmarterWare";
+			// request.dsns.ServicesManagement = "Services_Management";
+	
+			if( LCase( Left( cgi.HTTP_REFERER, 8 ) ) eq "https://") {
+				request.httpSecurePrefix = "https://";
+				request.secureCookie = "Secure;";
+			} else {
+				request.httpSecurePrefix = "https://";<!--- 2022-11-29 - Force to HTTPS:// --->
+				request.secureCookie = "";
+			} 
+	
+			if( not IsDefined("request.page_tick_counts")) {
+				request.page_tick_counts = ArrayNew(1);
+				request.page_tick_counts_start = gettickcount();
+			}
+	
+			startTicks=gettickcount();
+			request.startTicks=startTicks;
+			start_dt=now();
+			request.start_dt=start_dt;
+			request.lastMeterReading_ID="start";
+			request.lastMeterReading_Ticks=startTicks;
+	
+			request.WFSAPI_cumulative_time_per_request=0;
+			request.last_WFSAPI_cumulative=0;
+	
+			request.WFSAPI_methodstats_n_calls = structnew();
+			request.WFSAPI_methodstats_ms = structnew();
+	
+			request.okStripWhitespace_n_calls = 0;
+			request.okStripWhitespace_ms = 0;
+			request.okStripLines_n_calls = 0;
+			request.okStripLines_ms = 0;
+	
+			request.strBradTickMeter = StructNew();
+			request.strBradTickMeter.ref = ArrayNew(1);
+			request.strBradTickMeter.sinceStart = ArrayNew(1);
+			request.strBradTickMeter.sinceLastRef = ArrayNew(1);
+	
+			include "../../../Applications/1i00/_lib/ok_tickmeter.inc";
+	
+			<!---	O.K. 2003-12-02 NOTE: The order of lines is very important - do NOT swap any stuff around !!!
+	
+					Any server specific parameters should be in the
+					"this_server_settings/..." files
+					which should NEVER be copied across servers.
+			--->
+	
+			include "../../../../../this_server_settings/this_server_settings.inc";
+	
+			if (request.CFplatform neq "CF5" && !IsDefined("dontResetContent")) {
+				cfcontent(reset = "Yes"); // for CFMX
+			}
+	
+			<!--- SESSION MANGEMENT SETTINGS ------------------------------------------------------------- --->
+	
+			// Defaults for regular browsers
+			SessionTimeout = CreateTimeSpan(0, 3, 0, 0); // 3 hours
+			clientmanagement = "Yes";
+			SessionManagement = "Yes";
+			setclientcookies = "Yes";
+	
+			// Settings for Interact Staff
+			if (StructKeyExists(COOKIE, "isInteractStaff") && COOKIE.isInteractStaff) {
+				SessionTimeout = CreateTimeSpan(0, 8, 0, 0); // 8 hours for Interact Staff
+			}
+	
+			// Settings for F5 Load Balancer (Pool Check)
+			else if (CGI.http_user_agent EQ "") {
+				SessionTimeout = CreateTimeSpan(0, 0, 0, 32); // 32 seconds for pool check
+				clientmanagement = "Yes";
+				SessionManagement = "Yes";
+				setclientcookies = "No";
+			}
+	
+			// Enable settings, but use a shorter session timeout for scheduled tasks, TaskRunner, etc.
+			else if (REFindNoCase('CFSCHEDULE|TaskRunner', CGI.http_user_agent)) {
+				SessionTimeout = CreateTimeSpan(0, 0, 0, 10); // 10 minutes for scheduled tasks
+				clientmanagement = "Yes";
+				SessionManagement = "Yes";
+				setclientcookies = "Yes";
+			}
+	
+			// Settings for Axis (Webservices eg. Nutribank)
+			else if (REFindNoCase('Axis', CGI.http_user_agent)) {
+				SessionTimeout = CreateTimeSpan(0, 0, 0, 10); // 10 seconds for Axis
+				clientmanagement = "Yes";
+				SessionManagement = "Yes";
+				setclientcookies = "Yes";
+			}
+	
+			// We'll leave CFHTTP requests alone for now
+			else if (REFindNoCase('ColdFusion', CGI.http_user_agent)) {
+				// Do nothing specific for ColdFusion requests
+			}
+	
+			// Stop processing for known bots
+			else if (REFindNoCase('slurp|googlebot|becomebot|msnbot|mediapartners-google|zyborg|rufusbot|emonitor|twiceler|Fetch API Request|Microsoft Scheduled Cache Content Download Service|bingbot|Grendel-Scan|Nikto|Baiduspider', CGI.http_user_agent)) {
+				WriteOutput("Stopping processing for known bots");
+				Abort;
+				clientmanagement = "No";
+				SessionManagement = "No";
+				setclientcookies = "No";
+			}
+			<!--- END SESSION MANGEMENT SETTINGS --------------------------------------------------------- --->
+	
+			<!--- need to overwrite Coldfusion App Server generated cookies, three reasons: --->
+			<!--- 1. they use date format "wednesday, 20 April etc" which crashes on Safari --->
+			<!--- 2. put HTTPOnly in for security --->
+			<!--- 3. put Secure in if HTTPS for security --->
+	
+			if (CGI.HTTPS eq "on") {
+				request.secureCookie = "Secure;";
+			} else {
+				request.secureCookie = "Secure";
+			}
+	
+			cfheader(name = "Set-Cookie", value = "CFID=#GetToken(GetToken(session.URLToken,1,'&'),2,'=')#;path=/;SameSite=None;#request.secureCookie#;HTTPOnly;");
+			cfheader(name = "Set-Cookie", value = "CFTOKEN=#GetToken(GetToken(session.URLToken,2,'&'),2,'=')#;path=/;SameSite=None;#request.secureCookie#;HTTPOnly;");
+			cfheader(name = "Set-Cookie", value = "JSESSIONID=#GetToken(GetToken(session.URLToken,3,'&'),2,'=')#;path=/;SameSite=None;#request.secureCookie#;HTTPOnly;");
+	
+			if (StructKeyExists(COOKIE, "jsessionid")) {
+				cfheader(name = "Set-Cookie", value = "jessionid=#COOKIE.jsessionid#;path=/;#request.secureCookie#HTTPOnly;");
+			}
+	
+			if (StructKeyExists(cookie, 'CFAUTHORIZATION_1i00')) {
+				cfheader(
+					name = 'Set-Cookie',
+					value = 'CFAUTHORIZATION_1i00=#COOKIE.CFAUTHORIZATION_1i00#;domain=#CGI.SERVER_NAME#;path=/;#request.secureCookie#HTTPOnly;'
+				);
+			}
+
+
+	
+			include "../../../Applications/1i00/_1i00_STATIC_GLOBAL_PARAMS.inc";
+	
+			// <!--- LL SEC 2023-02-27 Throw honeypot error --->
+			if (isDefined("initialname") && initialname neq "") {
+				throw(type = "exception", message = "Potential Attack: Honeypot filled out");
+			}
+	
+			// <!--- LL SEC 2023-05-01 Check for naughty values and throw error if found --->
+			if (isDefined("url") and isStruct(url)) {
+				var testResult = this.utils.testStructForNaughty(url);
+				if (testResult neq false) {
+					throw (
+						type="exception",
+						message="Potential Attack: Naughty Value: '#testResult#' Detected in url"
+					);
+				}
+			}
+	
+			if (isDefined("form") and isStruct(form)) {
+				var testResult = this.utils.testStructForNaughty(form);
+				if (testResult neq false) {
+					throw (
+						type="exception",
+						message="Potential Attack: Naughty Value '#testResult#' Detected in form"
+					);
+				}
+			}
+	
+			application.InstallMode = request.InstallMode;
+			application.thisservername = request.thisservername;
+			application.dsns = request.dsns;
+			application.internal_ip_prefix_list = request.internal_ip_prefix_list;
+
+			// <!--- CORS headers to allow access by dev react frontends --->
+			if(APPLICATION.installmode == "DEV"){
+				cfheader(name="Access-Control-Allow-Origin", value="*");
+				// cfheader(name="Access-Control-Allow-Origin", value="https://io.dev.ip.com.au");
+				cfheader(name="Access-Control-Allow-Methods", value="GET, POST,PUT,OPTIONS");
+				cfheader(name="Access-Control-Allow-Headers", value="Content-Type, Authorization");
+				cfheader(name="Access-Control-Allow-Credentials", value="true");
+				cfheader(name="Access-Control-Expose-Headers", value="X-Time-To-Reload, X-Time-In-Parse, X-Time-In-Ontaffyrequest, X-Time-In-Resource, X-Time-In-Cache-check, X-Time-In-Cache-save, X-Time-In-Serialize, X-Time-In-Taffy, X-Time-In-Ontaffyrequestend, X-Time-In-OnRequestStart");
+				
+				if (cgi.request_method == "OPTIONS") {
+					// Return 200 for preflight requests
+					cfheader(statuscode="200");
+					cfabort;
+				}
+			    
+			} else {
+				cfheader(name="Access-Control-Allow-Origin", value="*");
+				// cfheader(name="Access-Control-Allow-Origin", value="https://io.dev.ip.com.au");
+				cfheader(name="Access-Control-Allow-Methods", value="GET, POST, OPTIONS");
+				cfheader(name="Access-Control-Allow-Headers", value="Content-Type, Authorization");
+				cfheader(name="Access-Control-Allow-Credentials", value="true");
+				
+				if (cgi.request_method == "OPTIONS") {
+					// Return 200 for preflight requests
+					cfheader(statuscode="200");
+					cfabort;
+				}
+
+			}
+	
+			// <!--- This appends variables set in the cfapplication tag into the application scope --->
+			StructAppend(application, application.GetApplicationSettings(), "yes");
+	
+			// Load Application Objects
+			for (currentObject in "ExternalSync,ExternalSync_LocalSync,ExternalSync_Updates,ExternalSync_Generic,FileValidation,WorkflowStandardFiles,Tags,WorkflowPackPanelElement,Email,Button,UploadLog,SmartMediaFunctions,StandardClassifiers,PDFUtils,LoginSecurity,iSpekQueryFunction,iSpekFunctions,Dialog,Translate,WebserviceUtilities,ImageProcessing_Functions,ImageProcessing,WorkflowRolePopulator,RightsMan,DAMResourcesList,Utilities,WorkflowUtilities,WorkflowToDo,WorkflowSpawn,DAMUtilities,FileStore,Library,LoginHttpsValidation,Upload,Upload_FlexLoader,PLUpload,Debug,CalendarReport,WorkflowChildQuestions,WorkflowChildQuestions_Roles,WorkflowChildQuestions_Groups,WorkflowChildQuestions_Fields,WorkflowParentQuestions,Survey,Categorisations,WorkflowProofingRemoteDirector,Templates,QuickActions,Navigation,ImageCache,BynderAPI".listToArray()) {
+				if (!structKeyExists(application, "o#currentObject#") || structKeyExists(URL, "refresh") || application.installMode eq "dev") {
+					application["o#currentObject#"] = createObject("component", "../Components/#currentObject#.cfc");
+					// <cftrace text="o#currentObject# component initialised">
+				}
+			}
+	
+			// Load Application Object - Survey Utilities - 2024-04-03 - RW - DB - Isolated Survey Utilities and put switch around it
+			if (APPLICATION.oUtilities.libraryContextDataOn ("Surveys_Active")) {
+			
+				for (currentObject in "SurveyUtilities".listToArray()) {
+					if (!structKeyExists(application, "o#currentObject#") || structKeyExists(URL, "refresh") || application.installMode eq "dev") {
+					application["o#currentObject#"] = createObject("component", "../Components/#currentObject#.cfc");
+					// <cftrace text="o#currentObject# component initialised">
+					}
+				}
+			}
+	
+	
+	
+			// LL UI 2022-11-15 added loader for new AjaxComponents
+			for (currentObject in "utilities,workflow".listToArray()) {
+				if (!structKeyExists(application, "ajax_#currentObject#") || structKeyExists(URL, "refresh") || application.installMode eq "dev") {
+					application["oAjax_#currentObject#"] = createObject("component", "../AjaxComponents/ajax_#currentObject#.cfc");
+					// <cftrace text="o#currentObject# component initialised">
+				}
+			}
+	
+			// Load Session Objects
+			for (currentObject in "User".listToArray()) {
+				if (!structKeyExists(SESSION, "o#currentObject#") || structKeyExists(URL, "refresh") || application.installMode eq "dev") {
+					SESSION["o#currentObject#"] = createObject("component", "../Components/#currentObject#.cfc");
+				}
+			}
+	
+			// VProof is "special" case that RW requested in spite of arguments presented by BH
+			// VProof is in a separate ColdVProof directory
+			if (!structKeyExists(application, "oVProofAppSpecific") || structKeyExists(URL, "refresh") || application.installMode eq "dev") {
+				application["oVProofGeneral"] = createObject("component", "../../ColdVProof/VProofGeneral");
+				application["oVProofAppSpecific"] = createObject("component", "../../ColdVProof/VProofAppSpecific");
+				application["oGetImage"] = createObject("component", "../../ColdRTI/Components/GetImage");
+			}
+	
+	
+	
+			// <!--- These settings files have been moved below the CFApplication tag so they can properly make use of the application scope --->
+			// <!--- include "../../this_server_settings/this_server_settings.inc"; --->
+			include "../../../../../this_server_settings/this_server_settings_LOCATIONS.inc";
+			include "../../../../../this_server_settings/this_server_settings_j1i00.inc";
+			include "../../../../../this_server_settings/this_server_settings_proofing.inc";
+			include "../../../../../this_server_settings/this_server_settings_proofing_vp.inc";
+	
+			<!--- this has settings that need to be included after the this_server_settings files --->
+			include "../../../Applications/1i00/_1i00_static_global_params_post_this_server_settings.inc";
+	
+			old_locale=SetLocale("English (Australian)");
+			now_locale=GetLocale();
+	
+			include "../../../Application_PATHS_maze.inc";
+	
+			include "../../../Applications/1i00/1i00_inc_tracer.inc";
+	
+	
+			include "../../../Applications/1i00/_inc/NO_CACHE_snippet.inc";
+	
+			// JDB: 4/2/20098 - OnRequestEnd code can interfere with CFCs that are called remotely (such as AJAX bound cfgrids etc
+			if (findNoCase(".cfc", CGI.Script_Name) == 0) {
+				if (listFindNoCase(request.integration_servers_IPs_list, cgi.remote_addr) == 0) {
+					writeOutput(request.okTickMeter("~~Application.cfm"));
+				}
+			}
+	
+			
+			include '../../../Applications/1i00/1i00_inc_cfscripts.inc';
+			
+			milliseconds_elapsed = gettickcount() - LOCAL.on_request_start_tickcount;
+			cfheader(name="X-Time-In-OnRequestStart", value="#milliseconds_elapsed#");
+
+			super.onRequestStart(TARGETPATH);
+
+
+	
+			return true;
+		}
+
+		function onRequest(TARGETPATH) {
+			writeLog('1i00 api onRequest');
+			return super.onRequest(TARGETPATH);
+		}
+
+		function onError(e) {
+			writeLog('1i00 api onError');
+			return super.onError(e);
+		}
+
+		// this function is called after the request has been parsed and all request details are known
+		function onTaffyRequest(verb, cfc, requestArguments, mimeExt){
+			writeLog('1i00 api onTaffyRequest');
+			// this would be a good place for you to check API key validity and other non-resource-specific validation
+			return true;
+		}
+
+		// function onError(e){
+		// 	writeDump(e);
+
+		// }
+	</cfscript>
+</cfcomponent>

@@ -1,0 +1,290 @@
+.sidebar {
+    height: 100vh;
+    width: 280px;
+    background-color: #fff;
+    color: #ecf0f1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 20px;
+    position: fixed;
+    left: 0;
+    top: 0;
+    border-right: 1px solid #DBDFE9;
+    transition: width 0.2s;
+    &.collapsed {
+        width: 80px;
+        transition: width 0.5s;
+        .logoContainer{
+            padding: 0 22px;
+        }
+        .logo{
+            opacity: 0;
+            width: 0;
+            height: 0;
+            pointer-events: none;
+        }
+        .menuContainer{
+            padding: 10px 15px;
+            .menuItems{
+                .menuItem{
+                    padding: 10px 10px;
+                    text-align: center;
+                    svg{
+                        margin: 0;
+                    }
+                }
+            }
+        }
+        .menuItem {
+            justify-content: center;
+        }
+
+        .icon {
+            margin-right: 0;
+        }
+    }
+    .sidebarToggle{
+        display: flex;
+        background: #f9f9f9;
+        align-items: center;
+        justify-content: center;
+        .IconRotated {
+            transform: rotate(180deg);
+            color: #17c653;
+        }
+        .Icon {
+            transition: transform 0.3s ease; 
+        }
+        &:hover{
+            svg{
+                color: #17c653;
+            }
+        }
+        svg{
+            font-size: 23px;
+            width: 23px;
+            height: 23px;
+            color: #4b5675;
+        }
+    }
+    .logoContainer{
+        display: flex;
+        width: 100%;
+        align-items: center;
+        padding: 0 30px;
+        justify-content: space-between;
+    }
+    .logo, .appSidebarLogo {
+        width: 23px;
+        .appSidebarLogo{
+            display: flex;
+        }
+    }
+    .menuContainer {
+        width: 100%;
+        padding: 10px 30px;
+        .menuItems {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            border-radius: 4px;
+            margin-top: 30px;
+            .menuItem {
+                padding: 10px 20px;
+                cursor: pointer;
+                transition: background-color 0.2s;
+                color: #4b5675;
+                margin-bottom: 10px;
+                background-color: #fff;
+                border-radius: 5px;
+                font-size: 1.1rem;
+                font-weight: 600;
+                .icon {
+                    margin-right: 8px;
+                    font-size: 1.2em; 
+                    color: #4b5675; 
+                }
+                &:hover{
+                    color: #071437;
+                    .icon {
+                        color: #071437; 
+                    }
+                }
+                &.active{
+                    color: #fff;
+                    background-color: var(--bs-primary);
+                    .icon {
+                        color: #fff; 
+                    }
+                }
+            }
+        }
+    }
+    &.darkMode{
+        background: #0f1014;
+        border-right: 1px solid #26272F;
+        .sidebarToggle{
+            background-color: #1b1c22 !important;
+            svg{
+                color: #9a9cae;
+            }
+            &:hover{
+                svg{
+                    color: #17c653;
+                }
+            }
+        }
+        .menuContainer{
+            .menuItems {
+                .menuItem {
+                    color: #9a9cae;
+                    background: transparent;
+                    border: 1px solid transparent;
+                    svg{
+                        color: #9a9cae;
+                    }
+                    &:hover{
+                        color: #fff;
+                        svg{
+                            color: #fff;
+                        }
+                    }
+                    &.active{
+                        background-color: #1b1c22;
+                        color: #fff;
+                        border: 1px solid #26272F;
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+.iplogoUuter 
+{
+    width: 38px;
+    height: 38px;
+    border-radius: 19px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.iplogoInner 
+{
+    text-align: left;
+    margin-left: 5px;
+    margin-top: 1px;
+}
+.iplogoWhitetopleft {
+    width: 5px;
+    height: 5px;
+    margin-right: 4px;
+    margin-bottom: 4px;
+    float: left;
+}
+.iplogoTopright {
+    width: 5px;
+    height: 5px;
+    background-color: #d2d2d2;
+    border-radius: 2.5px;
+    margin-right: 4px;
+    margin-bottom: 4px;
+    float: left;
+}
+.iplogoMiddleleft {
+    width: 5px;
+    height: 5px;
+    background-color: #d2d2d2;
+    border-radius: 2.5px;
+    margin-right: 4px;
+    margin-bottom: 4px;
+    float: left;
+}
+.iplogoMiddleright {
+        width: 5px;
+    height: 5px;
+    background-color: #d2d2d2;
+    border-radius: 2.5px;
+    margin-right: 4px;
+    margin-bottom: 4px;
+    float: left;
+}
+.iplogoBottomleft {
+    width: 5px;
+    height: 5px;
+    background-color: #d2d2d2;
+    border-radius: 2.5px;
+    margin-right: 4px;
+    margin-bottom: 4px;
+    float: left;
+}
+.tlball {
+    animation: i-animate-out 1s ease infinite alternate;
+    border-radius: 2.5px;
+    background-color: #04b440;
+    width: 5px;
+    height: 5px;
+}
+@keyframes ball-animate-out 
+{
+0% 
+    {
+        transform: scale(1);
+    }
+  100% 
+    {
+        transform: scale(2.2);
+    }
+}
+@keyframes ball-animate-in 
+{
+0% 
+    {
+        transform: scale(1);
+    }
+  100% 
+    {
+        transform: scale(2);
+    }
+}
+@keyframes i-animate-out
+{
+0% 
+    {
+            
+            opacity: 0.3;
+    }
+  1% 
+    {
+            
+            opacity: 0.3;
+    }
+  100% 
+    {
+        
+        opacity:1;
+    }
+}
+ @keyframes i-animate-out2
+{
+0% 
+    {
+            
+            opacity: 0.3;
+            transform: scale(1.25, 1);
+    }
+  1% 
+    {
+            
+            opacity: 0.3;
+            transform: scale(1.25, 1);
+    }
+  100% 
+    {
+        
+        opacity:1;
+        transform: scale(1.25, 1.1);
+    }
+}

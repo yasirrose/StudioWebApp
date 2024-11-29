@@ -1,0 +1,72 @@
+.main-screen {
+  display: flex;
+}
+.main-content {
+  flex: 1;
+  transition: margin-left 0.3s ease;
+  padding: 20px;
+
+  &.collapsed {
+    margin-left: 80px;
+  }
+}
+
+.dashboard {
+  padding: 20px;
+
+  h1 {
+    font-size: 2.5rem;
+    color: #333;
+  }
+
+  .content {
+    display: grid;
+    gap: 20px;
+    grid-template-columns: 1fr;
+
+    @media (min-width: 768px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .chartSection,
+    .mapSection,
+    .ratingSection {
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+      h2 {
+        font-size: 1.5rem;
+        color: #555;
+      }
+    }
+
+    .mapSection {
+      .mapContainer {
+        height: 300px;
+        width: 100%;
+        border-radius: 8px;
+        z-index: 2;
+      }
+    }
+
+    .ratingSection {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffa500;
+      font-size: 1.5rem;
+    }
+  }
+  &.darkMode{
+    h1{
+      color: #fff;
+    }
+    .chartSection,
+    .mapSection,
+    .ratingSection {
+      background: #0f1014;
+    }
+  }
+}
