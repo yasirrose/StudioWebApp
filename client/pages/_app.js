@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "../styles/style.bundle.css";
 import "../styles/globals.scss";
+import 'nprogress/nprogress.css';
 import Loader from '../components/common/loader/Loader';
 import { LoadingProvider, useLoading } from '../context/LoadingContext';
 import { useRouter } from 'next/router';
@@ -10,6 +11,14 @@ import { ThemeProvider } from '../context/ThemeContext';
 import { AuthProvider } from "../context/authContext";
 import { useFetchMenuPermissions } from "../hooks/permissions"; // Hook to fetch menu permissions
 import { hasAccess } from "../utils/permissions"; // Utility function for permission validation
+import nprogress from 'nprogress';
+
+nprogress.configure({
+    showSpinner: false, 
+    speed: 400,         
+    minimum: 0.2       
+  });
+
 
 const AppInitializer = ({ setSession }) => {
     const { setLoading } = useLoading();
@@ -17,6 +26,31 @@ const AppInitializer = ({ setSession }) => {
 
     useEffect(() => {
         console.log("------in AppInitializer-----");
+
+        let timer;
+            const handleRouteChangeStart = () => {
+            timer = setTimeout(() => nprogress.start(), 100); 
+        };
+
+        const handleRouteChangeComplete = () => {
+            clearTimeout(timer);
+            nprogress.done();
+        };
+
+        const handleRouteChangeError = () => {
+            clearTimeout(timer);
+            nprogress.done();
+        };
+
+        router.events.on('routeChangeStart', handleRouteChangeStart);
+        router.events.on('routeChangeComplete', handleRouteChangeComplete);
+        router.events.on('routeChangeError', handleRouteChangeError);
+
+        return () => {
+        router.events.off('routeChangeStart', handleRouteChangeStart);
+        router.events.off('routeChangeComplete', handleRouteChangeComplete);
+        router.events.off('routeChangeError', handleRouteChangeError);
+        };
         
         // import("bootstrap/dist/js/bootstrap.bundle.min.js");
         const initializeApp = async () => {
@@ -72,7 +106,10 @@ export default function App({ Component, pageProps: { session, ...pageProps } })
 
             // Check permissions and redirect if access is denied
             if (menuPermissions && roleId) {
-                if (!hasAccess(menuPermissions, path, roleId)) {
+                if (roleId === '1' && path === '/userProfile') {
+                    return true;
+                }
+                else if (!hasAccess(menuPermissions, path, roleId)) {
                     console.log("Access denied. Redirecting to /dashboard.");
                     await router.replace("/dashboard");
                 }
@@ -86,9 +123,9 @@ export default function App({ Component, pageProps: { session, ...pageProps } })
     }, [menuPermissions, router, permissionsLoading]);
 
     // Display a loader until access checking is complete
-    if (isCheckingAccess || permissionsLoading) {
-        return  <p>Checking access...</p>; // Replace with your loading component if necessary
-    }
+    // if (isCheckingAccess || permissionsLoading) {
+    //     return  <p>Checking access...</p>; // Replace with your loading component if necessary
+    // }
 
     return (
         <ThemeProvider>

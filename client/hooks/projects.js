@@ -12,11 +12,16 @@ const useFetchProjects = () => {
 
     useEffect(() => {
         const token = localStorage.getItem('jwttoken');
+        const id = localStorage.getItem('id');
+        const roleId = localStorage.getItem('roleId');
 
         const getProjects = async () => {
             try {
                 const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
-                const endpoint = '/projects';
+                let endpoint = '/projects';
+                if (id && roleId && roleId !== '1') {
+                    endpoint = `/projects&id=${id}`;
+                }
                 const url = `${baseURL}${endpoint}`;
 
                 const response = await api.get(url, {

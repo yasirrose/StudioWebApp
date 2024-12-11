@@ -113,10 +113,12 @@ const PermissionsPage = () => {
         </div>
     );
 
+    const [collapsed, setCollapsed] = useState(false);
+
     return (
         <div className={`main-screen ${isDarkMode ? 'darkMode' : 'lightMode'}`}>
-            <Sidebar />
-            <div className="main-content">
+            <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} />
+            <div className={`main-content permistion-secreen ${collapsed ? 'collapsed' : ''}`}>
                 <Header />
                 <div className="app-main flex-column flex-row-fluid" id="kt_app_main">
                     <div className="content-section d-flex flex-column flex-column-fluid">
@@ -134,11 +136,11 @@ const PermissionsPage = () => {
                                     <div>
                                         {/* Page Permissions Table */}
                                         <div className="card mb-5">
-                                            <div className="card-header border-0 pt-6">
+                                            <div className="card-header min-h-0 border-0 pt-6">
                                                 <h3 className="card-title">Page/Module Permissions</h3>
                                             </div>
-                                            <div className={`card-body ${isDarkMode ? styles.darkTable : ''}`}>
-                                                <table className="table table-bordered">
+                                            <div className={`card-body pt-0 pb-5 ${isDarkMode ? styles.darkTable : ''}`}>
+                                                <table className={`table-bordered ${styles.table}`}>
                                                     <thead>
                                                         <tr>
                                                             <th>Page/Module</th>
@@ -176,11 +178,11 @@ const PermissionsPage = () => {
 
                                         {/* Action-Level Access Table */}
                                         <div className="card">
-                                            <div className="card-header border-0 pt-6">
+                                            <div className="card-header min-h-0 border-0 pt-6">
                                                 <h3 className="card-title">Action-Level Access</h3>
                                             </div>
-                                            <div className={`card-body ${isDarkMode ? styles.darkTable : ''}`}>
-                                                <table className="table table-bordered">
+                                            <div className={`card-body pt-0 pb-5 ${isDarkMode ? styles.darkTable : ''}`}>
+                                                <table className={`table-bordered ${styles.table}`}>
                                                     <thead>
                                                         <tr>
                                                             <th>Action</th>

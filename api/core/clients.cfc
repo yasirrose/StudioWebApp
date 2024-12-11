@@ -111,15 +111,15 @@
     </cffunction>
 
     <cffunction access="public" name="getClientsData" returntype="array">
-		<cfargument name="client_id" type="any" required="false" default="">
+		<cfargument name="id" type="any" required="false" default="">
 		<cfquery returntype="array" name="qGetClientsData" datasource="#request.datasources#">
 
             SELECT clients.*, CONCAT(COALESCE(users.first_name, ''), ' ', COALESCE(users.last_name, '')) AS main_contact_name
             FROM clients
 			LEFT JOIN users ON clients.client_main_id = users.user_id
             WHERE client_deleted IS NULL
-            <cfif len(client_id) GT 0>
-                AND client_id = '#client_id#'
+            <cfif len(id) GT 0>
+                AND client_main_id = '#id#'
             </cfif>
             ORDER BY clients.updated_at DESC
 			

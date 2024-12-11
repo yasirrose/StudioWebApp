@@ -25,19 +25,19 @@ const Profile = () => {
         setIsEditProfile(query?.mode === 'edit' || query?.mode === 'add');
 
         if (allUsers) {
-            console.log("-------user_id = ", user_id);
+            // console.log("-------user_id = ", user_id);
             let id = localStorage.getItem('id')
-            console.log("-------id = ", id);
+            // console.log("-------id = ", id);
             let filteredList = [];
             if (user_id) {
                 filteredList = allUsers.filter(pro => pro.user_id.toString() === user_id.toString());
-                console.log("-1---filteredList = ", filteredList);
+                // console.log("-1---filteredList = ", filteredList);
 
                 setFilteredProfile(filteredList);
                 setIsFiltering(false);
             } else {
                 filteredList = allUsers.filter(pro => pro.user_id.toString() === id.toString());
-                console.log("-2---filteredList = ", filteredList);
+                // console.log("-2---filteredList = ", filteredList);
                 
                 setFilteredProfile(filteredList);
                 setIsFiltering(false);
@@ -70,6 +70,9 @@ const Profile = () => {
 
     const [collapsed, setCollapsed] = useState(false);
     const { isDarkMode } = useTheme();
+    console.log("-----isEditProfile = ", !isEditProfile);
+    console.log("-----isFiltering = ", isFiltering);
+    console.log("-----loading = ", !loading);
 
     return (
         <>

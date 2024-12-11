@@ -4,6 +4,7 @@ import { signIn } from 'next-auth/react';
 import { ToastContainer, toast } from 'react-toastify';
 import { useRouter } from 'next/router';
 import 'react-toastify/dist/ReactToastify.css';
+import { getSession, SessionProvider } from 'next-auth/react';
 
 const Signin = ({ onSignIn, onForgotPassword, onSignUp, onClientSignin }) => {
     const [email, setEmail] = useState("");
@@ -41,10 +42,34 @@ const Signin = ({ onSignIn, onForgotPassword, onSignUp, onClientSignin }) => {
         });
         console.log("--result = ", result);
         
+
         if (result.error) {
             toast.error("Invalid credentials!");
         } else {
-            router.push('/userProfile');
+            const session = await getSession();
+            console.log("-response-session = ", session);
+            if (session) {
+                console.log("session = ", session);
+
+                if(!localStorage.getItem('jwttoken')) {
+                    localStorage.setItem("jwttoken", session.user.jwttoken);
+                }
+                if(!localStorage.getItem('id')) {
+                    localStorage.setItem("id", session.user?.id);
+                }
+                if(!localStorage.getItem('clientId')) {
+                    localStorage.setItem("clientId", session.user?.clientId);
+                }
+                if(!localStorage.getItem('role')) {
+                    localStorage.setItem("role", session.user?.role);
+                }
+                if(!localStorage.getItem('roleId')) {
+                    localStorage.setItem("roleId", session.user?.roleId);
+                }
+
+            }
+
+            router.push('/dashboard');
         }
     };
 

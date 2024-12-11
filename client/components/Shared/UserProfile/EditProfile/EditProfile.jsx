@@ -14,6 +14,8 @@ const EditProfile = ({ profileData, setProfileData, setIsEditProfile }) => {
     const { addUser } = useAddUser();
     const router = useRouter();
     const { query } = router;
+    console.log("-------LOADING", loading);
+    
     
 
     // console.log("editprofiel.jsx----profileData =", profileData);
@@ -112,10 +114,10 @@ const EditProfile = ({ profileData, setProfileData, setIsEditProfile }) => {
         console.log("------ formData =", formData);
         if (query?.mode === 'add') {
             await addUser(formData);
-            router.push('/clientUsers');                
+            router.push('/users');                
         } else {
             if (query?.mode === 'edit') {
-                router.push('/clientUsers');                
+                router.push('/users');                
             }
             const updatedProfileData = await updateUserProfile(formData);
             setProfileData(updatedProfileData);
@@ -125,7 +127,7 @@ const EditProfile = ({ profileData, setProfileData, setIsEditProfile }) => {
 
     const handleCancel = () => {
         if (query?.mode === 'add' || query?.mode === 'edit') {
-            router.push('/clientUsers'); // Redirect on cancel in add mode
+            router.push('/users'); // Redirect on cancel in add mode
         } else {
             setIsEditProfile(false); // Close edit form in edit mode
         }
@@ -293,7 +295,7 @@ const EditProfile = ({ profileData, setProfileData, setIsEditProfile }) => {
                                         </div>
                                         <div className="d-flex">
                                             <button type="button" className="btn btn-primary me-2 px-6">Update Email</button>
-                                            <button type="button" className="btn btn-light-primary px-6" onClick={() => setEmailEditVisible(false)}>Cancel</button>
+                                            <button type="button" className="btn btn-color-gray-500 cancel-btn btn-active-light-primary px-6" onClick={() => setEmailEditVisible(false)}>Cancel</button>
                                         </div>
                                         </form>
                                     </div>
@@ -330,7 +332,7 @@ const EditProfile = ({ profileData, setProfileData, setIsEditProfile }) => {
                                     <div className="form-text mb-5">Password must be at least 8 characters and contain symbols</div>
                                     <div className="d-flex">
                                         <button type="button" className="btn btn-primary me-2 px-6">Update Password</button>
-                                        <button type="button" className="btn btn-light-primary px-6" onClick={() => setPasswordEditVisible(false)}>Cancel</button>
+                                        <button type="button" className="btn btn-color-gray-500 cancel-btn btn-active-light-primary px-6" onClick={() => setPasswordEditVisible(false)}>Cancel</button>
                                     </div>
                                     </form>
                                 </div>

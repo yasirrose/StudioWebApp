@@ -180,6 +180,9 @@ const ClientProjects = () => {
 
     const [collapsed, setCollapsed] = useState(false);
     const { isDarkMode } = useTheme();
+    console.log("---showModal---", showModal);
+    console.log("---loadingClients---", loadingClients);
+    
 
     return (
         <div className={`main-screen ${isDarkMode ? 'darkMode' : 'lightMode'}`}>
@@ -227,7 +230,7 @@ const ClientProjects = () => {
                                             <FaFileExport className="me-1" /> Export
                                         </button>
                                         { canAddProject && (
-                                            <button className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#kt_modal_add_project" onClick={handleAddProject}>
+                                            <button className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#kt_modal_add_project" onClick={() => handleAddProject()}>
                                                 <FaPlus className="me-1" /> Add New
                                             </button>
                                         )}

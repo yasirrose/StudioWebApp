@@ -50,7 +50,7 @@
 	</cffunction>
 
 	<cffunction access="public" name="getProjectsData" returntype="array">
-		<cfargument name="client_id" type="any" required="false" default="" />
+		<cfargument name="id" type="any" required="false" default="" />
 		<cftry>
             <!-- SQL query that joins the roles table to get role information -->
             <cfquery returntype="array" name="qGetProjectsData" datasource="#request.datasources#">
@@ -61,8 +61,8 @@
                     projects
                 LEFT JOIN clients ON projects.client_id = clients.client_id
                 WHERE projects.project_deleted IS NULL
-                <cfif len(arguments.client_id)>
-                    AND projects.client_id = <cfqueryparam value="#arguments.client_id#" cfsqltype="cf_sql_integer">
+                <cfif len(arguments.id)>
+                    AND clients.client_main_id = <cfqueryparam value="#arguments.id#" cfsqltype="cf_sql_integer">
                 </cfif>
 				ORDER BY projects.updated_at DESC
             </cfquery>

@@ -1,6 +1,5 @@
 // pages/calendar/CalendarPage.jsx
 import React, { useState, useEffect } from 'react';
-import { Scheduler } from "@aldabil/react-scheduler";
 import Header from "../../components/common/Header";
 import Footer from "../../components/common/Footer";
 import Sidebar from "../../components/common/Sidebar";

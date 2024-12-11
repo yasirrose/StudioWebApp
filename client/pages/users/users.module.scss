@@ -1,94 +1,175 @@
 .dropdown {
-    position: relative;
-    display: inline-block;
+  position: relative;
+  display: inline-block;
+}
+
+/* Dropdown button */
+.dropdownButton {
+  background-color: #f9f9f9;
+  color: #252f4a;
+  padding: 8px 16px;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+  border-radius: 4px;
+  .dropdownIcon{
+    margin-left: 3px;
+    font-size: 10px;
   }
-  
-  /* Dropdown button */
-  .dropdownButton {
-    background-color: #f9f9f9;
-    color: #252f4a;
-    padding: 8px 16px;
+  &:hover{
+    color: #17c653;
+    background-color: #dfffea;
+  }
+  &.darkButton{
+    background: #1b1c22;
+    color: #fff;
+  }
+}
+
+.dropdown:hover .dropdownContent {
+  display: block;
+}
+
+.dropdownContent{
+  position: fixed;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+  border-radius: 4px;
+  overflow: hidden;
+  text-align: left;
+  padding: 8px;
+  button {
+    color: black;
+    padding: 8px 10px;
+    text-decoration: none;
+    display: block;
+    width: 100%;
+    background: none;
     border: none;
+    text-align: left;
     cursor: pointer;
-    white-space: nowrap;
-    border-radius: 4px;
-    .dropdownIcon{
-      margin-left: 3px;
-      font-size: 10px;
-    }
+    border-radius: 6px;
+    font-size: 12px;
     &:hover{
-      color: #17c653;
-      background-color: #dfffea;
+      background: #70e999 !important;
+      color: #333;
     }
-    &.darkButton{
+    &.deleteButton{
+      &:hover{
+        background: #f8d7da !important;
+        color: #721c24;
+      }
+    }
+  }
+  &.darkDropdown{
+    background: #1b1c22;
+    .darkViewButton, .darkDeleteButton, .darkToggleButton{
       background: #1b1c22;
       color: #fff;
     }
   }
-  
-  .dropdown:hover .dropdownContent {
-    display: block;
+}
+
+.dropdownContent button:hover {
+  background-color: #ddd;
+}
+
+.viewButton:hover {
+  background-color: #e0e0e0;
+}
+
+.deleteButton:hover {
+  background-color: #ffcccc;
+}
+
+.activateButton:hover {
+  background-color: #ccffcc;
+}
+
+.deactivateButton:hover {
+  background-color: #ffebcc;
+}
+
+
+
+.paginationContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 20px;
+
+  .pageDropdown {
+    padding: 5px 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    color: #333;
+    cursor: pointer;
+
+    &:focus {
+      outline: none;
+    }
   }
 
-  .dropdownContent{
-    display: none;
-    position: fixed;
-    background-color: #f9f9f9;
-    min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-    z-index: 1;
-    border-radius: 4px;
-    overflow: hidden;
-    text-align: left;
-    padding: 8px;
-    button {
-      color: black;
-      padding: 8px 10px;
-      text-decoration: none;
-      display: block;
-      width: 100%;
-      background: none;
-      border: none;
-      text-align: left;
+  .pagination {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    li {
+      margin: 0 5px;
       cursor: pointer;
-      border-radius: 6px;
-      font-size: 12px;
-      &:hover{
-        background: #70e999 !important;
-        color: #333;
+
+      &.active a {
+        background-color: #17c653;
+        color: white;
       }
-      &.deleteButton{
-        &:hover{
-          background: #f8d7da !important;
-          color: #721c24;
+
+      &.disabled {
+        cursor: not-allowed;
+        opacity: 0.5;
+      }
+
+      a {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: .475rem;
+        height: 2.5rem;
+        min-width: 2.5rem;
+        font-weight: 500;
+        font-size: 1.075rem;
+
+        &:hover {
+          background-color: #f1f1f1;
         }
       }
     }
-    &.darkDropdown{
-      background: #1b1c22;
-      .darkViewButton, .darkDeleteButton, .darkToggleButton{
-        background: #1b1c22;
-        color: #fff;
+  }
+}
+
+.darkMode{
+  .paginationContainer{
+    .pagination{
+      li{
+        &.active{
+          a{
+            &:hover{
+              background-color: #17c653 !important;
+              color: white !important;
+            }
+          }
+        }
+        a{
+          &:hover {
+            color: #17c653 !important;
+            background: #1b1c22 !important;
+          }
+        }
       }
     }
   }
-  
-  .dropdownContent button:hover {
-    background-color: #ddd;
-  }
-  
-  .viewButton:hover {
-    background-color: #e0e0e0;
-  }
-  
-  .deleteButton:hover {
-    background-color: #ffcccc;
-  }
-  
-  .activateButton:hover {
-    background-color: #ccffcc;
-  }
-  
-  .deactivateButton:hover {
-    background-color: #ffebcc;
-  }
+}

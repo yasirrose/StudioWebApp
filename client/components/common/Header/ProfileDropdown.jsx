@@ -6,12 +6,12 @@ import { signOut } from "next-auth/react";
 import { useRouter } from 'next/router';
 import getDecodedToken from '/utils/jwtToken';
 import { useState, useEffect } from 'react';
-import { FiSun, FiMoon } from 'react-icons/fi';
+import { FiSun, FiMoon, FiMonitor } from 'react-icons/fi';
 
 const ProfileDropdown = () => {
     const router = useRouter();
     const [tokenData, setTokenData] = useState(null);
-    const { isDarkMode, toggleTheme } = useTheme();
+    const { theme, isDarkMode, toggleTheme } = useTheme();
 
     useEffect(() => {
         const token = localStorage.getItem('jwttoken');
@@ -21,22 +21,29 @@ const ProfileDropdown = () => {
         }
     }, []);
 
-    const handleLogout = async () => {
-        // localStorage.removeItem("jwttoken");
-        // localStorage.removeItem("id");
-        await signOut({ redirect: false });
-        router.push('/Auth');
-    };
-
     const handleNavigation = async (path) => {
         if (path == '/userProfile') {
             localStorage.removeItem('client_userId');
         } else {
-            // localStorage.removeItem("jwttoken");
-            // localStorage.removeItem("id");
+            localStorage.clear();
             await signOut({ redirect: false });
         }
         router.push(path);
+    };
+
+    const handleThemeChange = (newTheme) => {
+        if (newTheme === "system") {
+            toggleTheme("system"); // Set theme as "system" to persist
+        } else {
+            toggleTheme(newTheme);
+        }
+      };
+
+    // Determine the icon to display based on the current theme
+    const getThemeIcon = () => {
+        if (theme === "light") return <FiSun />;
+        if (theme === "dark") return <FiMoon />;
+        if (theme === "system") return <FiMonitor />;
     };
 
     return (
@@ -51,9 +58,9 @@ const ProfileDropdown = () => {
                 />
             </button>
             <div className={styles.dropdownMenu}>
-                <div className={`${styles.menuItem} px-3`}>
-                    <div className={`${styles.menuContent} d-flex align-items-center px-0 mb-2`}>
-                        <div className="symbol symbol-50px me-5">
+                <div className={`${styles.menuItem}`}>
+                    <div className={`${styles.menuContent} d-flex align-items-center px-0`}>
+                        <div className={`${styles.symbol} me-5`}>
                             <Image
                                 src="/images/profile-icon.png"
                                 alt="Logo"
@@ -94,15 +101,18 @@ const ProfileDropdown = () => {
                 </div>
                 <div className={styles.themeDropdownContainer}>
                     <button className={styles.themeToggleBtn}>
-                    Mode
+                        <span>Mode</span> {getThemeIcon()}
                     </button>
                     <div className={styles.innerDropdown}>
-                    <button onClick={() => toggleTheme("light")} className={styles.innerDropdownLink}>
-                        <FiSun style={{ marginRight: '8px' }} /> Light
-                    </button>
-                    <button onClick={() => toggleTheme("dark")} className={styles.innerDropdownLink}>
-                        <FiMoon style={{ marginRight: '8px' }} /> Dark
-                    </button>
+                        <button onClick={() => handleThemeChange("light")} className={styles.innerDropdownLink}>
+                            <FiSun style={{ marginRight: "8px" }} /> Light
+                        </button>
+                        <button onClick={() => handleThemeChange("dark")} className={styles.innerDropdownLink}>
+                            <FiMoon style={{ marginRight: "8px" }} /> Dark
+                        </button>
+                        <button onClick={() => handleThemeChange("system")} className={styles.innerDropdownLink}>
+                            <FiMonitor style={{ marginRight: "8px" }} /> System
+                        </button>
                     </div>
                 </div>
                 <div className={styles.dropdownbuttons}>

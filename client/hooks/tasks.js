@@ -13,6 +13,10 @@ const useTasks = () => {
     useEffect(() => {
         // Get the task ID and jwttoken from local storage
         const token = localStorage.getItem('jwttoken');
+        const userId = localStorage.getItem('id');
+        const roleId = localStorage.getItem('roleId');
+        const clientId = localStorage.getItem('clientId');
+
         console.log("-12--->client id = ", localStorage.getItem('clientId'));
         // Define the API call function
         const getTask = async () => {
@@ -20,12 +24,18 @@ const useTasks = () => {
 
                 // Make the API request to fetch task data
                 const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
-                const endpoint = '/tasks';
-                // const url = `${baseURL}${endpoint}`;
+                let endpoint = '/tasks';
+                 
+                if (userId && roleId && roleId == '2') {
+                    endpoint = `/tasks&id=${userId}`;
+                } else if (userId && roleId && roleId == '3') {
+                    endpoint = `/tasks&assignee_id=${userId}`;
+                } else if (clientId) {
+                    endpoint = `/tasks&clientId=${clientId}`;
+                }
 
-                const clientId = localStorage.getItem('clientId');
-                console.log("---->client id = ", clientId);
-                const url = clientId > 0 ? `${baseURL}${endpoint}&clientId=${clientId}` : `${baseURL}${endpoint}`;
+                // const url = clientId > 0 ? `${baseURL}${endpoint}&clientId=${clientId}` : `${baseURL}${endpoint}`;
+                const url = `${baseURL}${endpoint}`;
 
                 const response = await api.get(
                     url,
@@ -74,7 +84,13 @@ const useAddUpdateTask = () => {
             }
 
             const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
-            const endpoint = `/tasks`;
+            let endpoint = `/tasks`;
+
+            if (userId && roleId && roleId !== 1) {
+                endpoint = `/tasks&id=${userId}`;
+            }
+            console.log("-ENDPOINNT = ", endpoint);
+            
             const url = `${baseURL}${endpoint}`;
             setLoading(true);
 

@@ -2,12 +2,15 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --bs-primary-active: #04B440;
+  --bs-primary: #17C653;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
+    --bs-primary: #01BF73;
   }
 }
 
@@ -15,6 +18,9 @@ html,
 body {
   max-width: 100vw;
   overflow-x: hidden;
+  .min-h-0{
+    min-height: inherit !important;
+  }
 }
 
 body{
@@ -43,8 +49,8 @@ a {
 }
 .btn.btn-primary:hover:not(.btn-active), .btn.btn-primary:focus:not(.btn-active){
   color: #fff;
-  border-color: #04b440;
-  background-color: #04b440 !important;
+  border-color: #17C653;
+  background-color: #17C653 !important;
 }
 .btn.btn-active-light-primary:hover:not(.btn-active){
   background-color: #dfffea !important;
@@ -66,8 +72,14 @@ button.btn.btn-danger:hover{
 .card-toolbar{
   .btn-light-primary{
     background: #dfffea;
+    img{
+      margin-right: 2px;
+    }
     &:hover{
       color: #fff !important;
+      img{
+        filter: brightness(0) invert(1);
+      }
     }
   }
 }
@@ -198,6 +210,8 @@ button.btn.btn-danger:hover{
     background: #fbfbfb;
     .card{
       background: #fff;
+      border: 1px solid #f1f1f4;
+      padding: 0 20px 20px;
       .card-header{
         display: flex;
         justify-content: space-between;
@@ -209,7 +223,13 @@ button.btn.btn-danger:hover{
         margin-bottom: 15px;
       }
       .card-body{
-        padding: 2rem 2.25rem;
+        padding: 2rem 2.25rem 0;
+        .rdt_TableHeadRow, .rdt_TableRow{
+          border-bottom: 1px dotted #f1f1f4 !important;
+        }
+        .rdt_Pagination{
+          border-top: 0;
+        }
       }
       &.signin-method{
         padding: 0;
@@ -239,12 +259,32 @@ button.btn.btn-danger:hover{
     }
   }
   &.darkMode{
+    .btn{
+      &.btn-light{
+        color: #808290;
+        background: #1f212a;
+        &:hover{
+          color: #00a261;
+          background: #1f212a !important;
+        }
+      }
+    }
     background: #0f1014;
     h1, h2, h3, h4, h5, a, p, label, span{
       color: #fff !important;
       &.btn.btn-light{
         color: inherit !important;
         background: #fff !important;
+      }
+    }
+    .btn.btn-active-light-primary{
+      &.cancel-btn{
+        color: #636674;
+        &:hover:not(.btn-active){
+          background-color: #1f212a !important;
+          color: #00a261;
+        }
+        
       }
     }
     ul{
@@ -264,76 +304,83 @@ button.btn.btn-danger:hover{
     }
     .search-field{
       input{
-        border: 1px solid #fff !important;
-        background: transparent;
+        border: 1px solid #1b1c22 !important;
+        background: #1b1c22 !important;
         color: #fff;
       }
     }
-    .card {
-      background: #15171c;
-      border: 1px solid #1e2027;
-      padding: 0 20px 20px;
-      .rdt_TableRow, .rdt_TableHeadRow, .rdt_Pagination {
-        background: #15171c !important;
-        color: #fff;
-        border: 1px dashed #26272F !important;
-        outline: none;
-        svg, button{
-          fill: #fff;
-        }
-      }
-      &.signin-method{
-        .card-body{
-          .form-text{
-            color: #808290;
-          }
-          .method-content{
-            p{
-              color: #fff;
-            }
-            span{
-              color: #808290 !important;
+    .content-section{
+      .app-content{
+        .card {
+          background: #15171c;
+          border: 1px solid #1e2027;
+          .rdt_TableRow, .rdt_TableHeadRow, .rdt_Pagination {
+            background: #15171c !important;
+            color: #636674;
+            border-bottom: 1px dashed #26272F !important;
+            outline: none;
+            svg, button{
+              fill: #fff;
             }
           }
-          .ms-auto{
-            .btn{
+          .rdt_Pagination{
+            border: 0 !important;
+          }
+          &.signin-method{
+            .card-body{
+              .form-text{
                 color: #808290;
-                background-color: #1b1c22;
-                &:hover{
+              }
+              .method-content{
+                p{
+                  color: #fff;
+                }
+                span{
+                  color: #808290 !important;
+                }
+              }
+              .ms-auto{
+                .btn{
+                  color: #808290;
+                  background-color: #1b1c22;
+                  &:hover{
                     color: #00a261;
                     background-color: #1b1c22 !important;
+                  }
                 }
+              }
+              .separator{
+                border-bottom-color: #363843;
+              }
             }
-          }
-          .separator{
-            border-bottom-color: #363843;
           }
         }
       }
     }
+    
     .Scheduler{
-        border-color: #26272F !important;
-        div, a{
+      border-color: #26272F !important;
+      div, a{
         color: #fff !important;
         border-color: #26272F !important;
         .MuiButtonBase-root{
-            span{
-                background: transparent;
-            }
+          span{
+            background: transparent;
+          }
         }
         span{
-            background: #15171c;
-            color: inherit !important;
-            border-color: #26272F !important;
+          background: #15171c;
+          color: inherit !important;
+          border-color: #26272F !important;
         }
-        }
+      }
     }
     div > div > .MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded {
       background: #15171c;
       a, button{
-            color: #fff !important;
+        color: #fff !important;
         svg{
-            color: #fff !important;
+          color: #fff !important;
         }
       }
     }
@@ -351,7 +398,10 @@ button.btn.btn-danger:hover{
       color: #9a9cae !important;
       transition: color .2s ease;
       &.form-check-input[type=checkbox]{
-        background-color: #26272f !important;
+        background-color: var(--bs-primary) !important;
+        &:not(:checked) {
+          background-color: #26272f !important;
+        }
       }
     }
     .modal-header, .modal-footer{
@@ -412,6 +462,17 @@ button.btn.btn-danger:hover{
     input[type="date"]::-moz-calendar-picker-indicator, input[type="time"]::-moz-calendar-picker-indicator {
         filter: invert(1);
         opacity: 0.6;
+    }
+    .card-toolbar{
+      .btn-light-primary{
+        color: var(--bs-primary);
+        border-color: #1b1c22;
+        background-color: #1b1c22;
+        &:hover{
+          color: #fff !important;
+          background: var(--bs-primary);
+        }
+      }
     }
   }
 }
@@ -495,4 +556,42 @@ button.btn.btn-danger:hover{
 
 .reset-password, .edit-change-email {
   width: 100%;
+}
+
+#nprogress .bar {
+  background: #17c653 !important; /* Change the bar color */
+}
+
+#nprogress .spinner-icon {
+  border-top-color: #17c653 !important; /* Change the spinner color */
+  border-left-color: #17c653 !important;
+}
+
+#nprogress .peg {
+  box-shadow: 0 0 10px #17c653, 0 0 5px #17c653 !important; /* Glow effect */
+}
+
+.form-group .rmdp-container {
+  width: 100%;
+}
+
+.form-group .rmdp-container input {
+  background-color: var(--bs-gray-100);
+  border-color: var(--bs-gray-100);
+  color: var(--bs-gray-700);
+  transition: color .2s ease;
+  display: block;
+  width: 100%;
+  padding: .775rem 1rem;
+  font-size: 1.1rem;
+  font-weight: 500;
+  line-height: 1.5;
+  height: auto;
+}
+
+.form-group .rmdp-container .rmdp-time-picker input {
+  width: max-content;
+  max-width: 20px;
+  padding: 0;
+  background-color: #fff;
 }

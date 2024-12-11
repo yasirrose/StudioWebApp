@@ -32,6 +32,17 @@
                 <cfloop array="#tasks#" index="task">
                     <cfset task_gid = task.gid />
                     <cfset task_name = task.name />
+                    
+
+                    <cfif structKeyExists(task, "assignee")>
+                        <cfset assignee = task.assignee />
+                        <cfdump  var="-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>">
+                        <cfdump  var="#assignee.name#>">
+                        <cfdump  var="-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>">
+                    <cfelse>
+                        <cfset assignee = "" />
+                    </cfif>
+                    
 
                     <!--- Validate task data --->
                     <cfif NOT isNull(task_gid) AND NOT isNull(task_name)>

@@ -1,7 +1,9 @@
 <cfcomponent extends="taffy.core.resource" taffy_uri="/tasks" taffy:docs:name="tasks">
 
 	<cffunction name="fetchTasks" taffy:verb="get" access="public" output="true" hint="">
-		<cfargument name="clientId" type="any" required="false" default="">
+		<cfargument name="id" type="any" required="false" default="">
+		<cfargument name="client_id" type="any" required="false" default="">
+        <cfargument name="assignee_id" type="any" required="false" default="">
 
         <!--- <cfset jwtObj = createObject("component", "core.jwt")>
 		<cfset jwtData = jwtObj.validateJwt()> 
@@ -10,13 +12,16 @@
 		</cfif> --->
 
         <cfset taskService = createObject("component","core.tasks")>
-		
-        <cfif len(arguments.clientId) GT 0>
-            <Cfset tasksData = taskService.getTasks(arguments.clientId)>
+
+        <cfif len(arguments.client_id) GT 0>
+            <Cfset tasksData = taskService.getTasks(arguments.client_id)>
+        <cfelseif len(arguments.id) GT 0>
+            <Cfset tasksData = taskService.getTasks(arguments.id)>
+        <cfelseif len(arguments.assignee_id) GT 0>
+            <Cfset tasksData = taskService.getTasks(arguments.assignee_id)>
         <cfelse>
             <Cfset tasksData = taskService.getTasks()>
         </cfif>
-		
 
 		<cfreturn rep(tasksData).withStatus(200) />
 	</cffunction> 

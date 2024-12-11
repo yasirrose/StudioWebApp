@@ -127,33 +127,86 @@ const Clients = () => {
         },
         {
             name: 'Actions',
-            cell: row => (
-                <div className={`${styles.dropdown} ${isDarkMode ? styles.darkDropdown : styles.lightDropdown}`}>
-                    <button className={`${styles.dropdownButton} ${isDarkMode ? styles.darkButton : styles.lightButton}`}>Actions <FaChevronDown className={styles.dropdownIcon} /> </button>
-                    <div className={`${styles.dropdownContent} ${isDarkMode ? styles.darkDropdown : styles.lightDropdown}`}>
-                        <button className={`${styles.viewButton} ${isDarkMode ? styles.darkViewButton : styles.lightViewButton}`} onClick={() => router.push(`/clientProjects?client_id=${row.client_id}`)}>View Projects</button>
-                        { canEditClient && (
-                            <button className={`${styles.viewButton} ${isDarkMode ? styles.darkViewButton : styles.lightViewButton}`} data-bs-toggle="modal" data-bs-target="#kt_modal_add_customer" onClick={() => openEditClientModal(row)}>Edit Client</button>
-                        )}
-                        { canDeleteClient && (
-                            <button 
-                                className={`${styles.deleteButton} ${isDarkMode ? styles.darkDeleteButton : styles.lightDeleteButton}`} 
-                                onClick={() => handleDelete(row.client_id, setClients)}>
-                                Delete
-                            </button>
-                        )}
-                        { canEditClient && (
-                            <button
-                                className={`${row.user_active ? styles.deactivateButton : styles.activateButton} ${isDarkMode ? styles.darkToggleButton : styles.lightToggleButton}`}
-                                onClick={() => activateDeactivateClient(row.client_id, row.client_active ? 0 : 1, setClients)}
+            cell: row => {
+                const [isOpen, setIsOpen] = useState(false);
+        
+                useEffect(() => {
+                    const handleOutsideClick = (event) => {
+                        if (!event.target.closest(`#dropdown-${row.client_id}`)) {
+                            setIsOpen(false);
+                        }
+                    };
+        
+                    document.addEventListener('click', handleOutsideClick);
+                    return () => document.removeEventListener('click', handleOutsideClick);
+                }, [row.client_id]);
+        
+                return (
+                    <div
+                        id={`dropdown-${row.client_id}`}
+                        className={`${styles.dropdown} ${isDarkMode ? styles.darkDropdown : styles.lightDropdown}`}
+                        onClick={(e) => e.stopPropagation()} // Prevent event bubbling
+                    >
+                        <button
+                            className={`${styles.dropdownButton} ${isDarkMode ? styles.darkButton : styles.lightButton}`}
+                            onClick={() => setIsOpen(!isOpen)}
+                        >
+                            Actions <FaChevronDown className={styles.dropdownIcon} />
+                        </button>
+                        {isOpen && (
+                            <div
+                                className={`${styles.dropdownContent} ${isDarkMode ? styles.darkDropdown : styles.lightDropdown}`}
                             >
-                                {row.client_active ? 'Deactivate' : 'Activate'}
-                            </button>
+                                <button
+                                    className={`${styles.viewButton} ${isDarkMode ? styles.darkViewButton : styles.lightViewButton}`}
+                                    onClick={() => {
+                                        setIsOpen(false);
+                                        router.push(`/clientProjects?client_id=${row.client_id}`);
+                                    }}
+                                >
+                                    View Projects
+                                </button>
+                                {canEditClient && (
+                                    <button
+                                        className={`${styles.viewButton} ${isDarkMode ? styles.darkViewButton : styles.lightViewButton}`}
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#kt_modal_add_customer"
+                                        onClick={() => {
+                                            setIsOpen(false);
+                                            openEditClientModal(row);
+                                        }}
+                                    >
+                                        Edit Client
+                                    </button>
+                                )}
+                                {canDeleteClient && (
+                                    <button
+                                        className={`${styles.deleteButton} ${isDarkMode ? styles.darkDeleteButton : styles.lightDeleteButton}`}
+                                        onClick={() => {
+                                            setIsOpen(false);
+                                            handleDelete(row.client_id, setClients);
+                                        }}
+                                    >
+                                        Delete
+                                    </button>
+                                )}
+                                {canEditClient && (
+                                    <button
+                                        className={`${row.client_active ? styles.deactivateButton : styles.activateButton} ${isDarkMode ? styles.darkToggleButton : styles.lightToggleButton}`}
+                                        onClick={() => {
+                                            setIsOpen(false);
+                                            activateDeactivateClient(row.client_id, row.client_active ? 0 : 1, setClients);
+                                        }}
+                                    >
+                                        {row.client_active ? 'Deactivate' : 'Activate'}
+                                    </button>
+                                )}
+                            </div>
                         )}
                     </div>
-                </div>
-            ),
-        },
+                );
+            },
+        }
     ];
 
     // const closeModal = () => setModalOpen(false);

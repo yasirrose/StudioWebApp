@@ -12,6 +12,7 @@
     top: 0;
     border-right: 1px solid #DBDFE9;
     transition: width 0.2s;
+    z-index: 999;
     &.collapsed {
         width: 80px;
         transition: width 0.5s;
@@ -29,7 +30,13 @@
             .menuItems{
                 .menuItem{
                     padding: 10px 10px;
-                    text-align: center;
+                    justify-content: center;
+                    span{
+                        opacity: 0;
+                        width: 0;
+                        height: 0;
+                        pointer-events: none;
+                    }
                     svg{
                         margin: 0;
                     }
@@ -42,6 +49,32 @@
 
         .icon {
             margin-right: 0;
+        }
+        &:hover{
+            width: 280px;
+            z-index: 999;
+            transition: width .3s ease;
+            .logo{
+                opacity: 1;
+                width: inherit;
+                height: inherit;
+                pointer-events: inherit;
+            }
+            .menuItems{
+                .menuItem{
+                    padding: 10px 20px;
+                    justify-content: flex-start;
+                    svg{
+                        margin-right: 8px;
+                    }
+                    span{
+                        opacity: 1;
+                width: inherit;
+                height: inherit;
+                pointer-events: inherit;
+                    }
+                }
+            }
         }
     }
     .sidebarToggle{
@@ -100,6 +133,8 @@
                 border-radius: 5px;
                 font-size: 1.1rem;
                 font-weight: 600;
+                display: flex;
+                justify-content: flex-start;
                 .icon {
                     margin-right: 8px;
                     font-size: 1.2em; 
@@ -122,7 +157,7 @@
         }
     }
     &.darkMode{
-        background: #0f1014;
+        background: #15171c;
         border-right: 1px solid #26272F;
         .sidebarToggle{
             background-color: #1b1c22 !important;
@@ -288,3 +323,4 @@
         transform: scale(1.25, 1.1);
     }
 }
+

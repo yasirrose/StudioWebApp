@@ -11,70 +11,69 @@ export default async function auth(req, res) {
   //should this have the path /api/auth?
   process.env.NEXTAUTH_URL = `${protocol}://${host}`;
 
-  const providers = [
-   
-    CredentialsProvider({
-        name: "Email",
-        credentials: {
-            email: { label: 'Email', type: 'email', placeholder: 'Enter your email' },
-            password: { label: 'Password', type: 'password' },
-            pincode: { label: 'PIN', type: 'text', placeholder: 'Enter your 6-digit PIN (for clients)' },        
-        },
-        async authorize(credentials) {
-            console.log("--authorize----IN CREDENTIALS PROVIDER");
-            const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
-            const endpoint = '/auth/login';
-            let url = "";
+    const providers = [
+        CredentialsProvider({
+            name: "Email",
+            credentials: {
+                email: { label: 'Email', type: 'email', placeholder: 'Enter your email' },
+                password: { label: 'Password', type: 'password' },
+                pincode: { label: 'PIN', type: 'text', placeholder: 'Enter your 6-digit PIN (for clients)' },        
+            },
+            async authorize(credentials) {
+                console.log("--authorize----IN CREDENTIALS PROVIDER");
+                const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
+                const endpoint = '/auth/login';
+                let url = "";
 
-            if (credentials.email) {
-                url = `${baseURL}${endpoint}&email=${encodeURIComponent(credentials.email)}&password=${encodeURIComponent(credentials.password)}`;
-            } else {
-                url = `${baseURL}${endpoint}&pincode=${encodeURIComponent(credentials.pincode)}`;
-            }
-
-            // console.log('credentials',url);
-            console.log('credentials-URL----->>>>>>>>',url);
-
-            try {
-                // toast.error('Login passed. Please check your credentials.');
-                const response = await api.get(url, {
-                    headers: {
-                    'Content-Type': 'application/json',
-                    },
-                });
-                console.log("RESPONSE-----login----->: ", response.data);
-
-                //   console.log(response);
-
-                if (response.data.STATUS === 'SUCCESS') {
-                    const user = {
-                        id: response.data?.USERID,
-                        clientId: response.data?.CLIENTID,
-                        role: response.data?.ROLE,
-                        roleId: response.data?.ROLEID,
-                        name: response.data.NAME,
-                        jwt: response.data.JWT,
-                    };
-                    
-                    return Promise.resolve(user);
+                if (credentials.email) {
+                    url = `${baseURL}${endpoint}&email=${encodeURIComponent(credentials.email)}&password=${encodeURIComponent(credentials.password)}`;
                 } else {
+                    url = `${baseURL}${endpoint}&pincode=${encodeURIComponent(credentials.pincode)}`;
+                }
+
+                // console.log('credentials',url);
+                console.log('credentials-URL----->>>>>>>>',url);
+
+                try {
+                    // toast.error('Login passed. Please check your credentials.');
+                    const response = await api.get(url, {
+                        headers: {
+                        'Content-Type': 'application/json',
+                        },
+                    });
+                    console.log("RESPONSE-----login----->: ", response.data);
+
+                    //   console.log(response);
+
+                    if (response.data.STATUS === 'SUCCESS') {
+                        const user = {
+                            id: response.data?.USERID,
+                            clientId: response.data?.CLIENTID,
+                            role: response.data?.ROLE,
+                            roleId: response.data?.ROLEID,
+                            name: response.data.NAME,
+                            jwt: response.data.JWT,
+                        };
+                        
+                        return Promise.resolve(user);
+                    } else {
+                        return null;
+                    }
+                } catch (error) {
+                    if (error.response) {
+                        
+                    } else if (error.request) {
+                        // The request was made but no response was received
+                        console.error('Error request:', error.request);
+                    } else {
+                        // Something happened in setting up the request that triggered an Error
+                        console.error('Error message:', error.message);
+                    }
                     return null;
                 }
-            } catch (error) {
-                if (error.response) {
-                    
-                } else if (error.request) {
-                    // The request was made but no response was received
-                    console.error('Error request:', error.request);
-                } else {
-                    // Something happened in setting up the request that triggered an Error
-                    console.error('Error message:', error.message);
-                }
-                return null;
-            }
-        },
-    }),
-  ];
+            },
+        }),
+    ];
 
     const authOptions = {  
         providers,

@@ -7,6 +7,7 @@
 </cfhttp>
 
 <cfdump  var="#projectResponse.status_code#">
+
 <!--- Check for successful response --->
 <cfif projectResponse.status_code EQ 200>
     <cfset projects = deserializeJson(projectResponse.FileContent).data />

@@ -6,16 +6,16 @@ const UserProfile = ({profileData, loading, error, setIsEditProfile}) => {
      
     const router = useRouter();
 
-    if (loading) {
-        return <div>Loading...</div>;
-    } else {
-        // console.log("--in-- profileData = ", profileData);
-        // debugger;
-    }
+    // if (loading) {
+    //     return <div>Loading...</div>;
+    // } else {
+    //     // console.log("--in-- profileData = ", profileData);
+    //     // debugger;
+    // }
 
-    if (error) {
-        return <div>Error: {error}</div>;
-    }
+    // if (error) {
+    //     return <div>Error: {error}</div>;
+    // }
 
     // Helper function to format the display of user profile fields
     const formatField = (fieldValue) => {

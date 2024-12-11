@@ -13,6 +13,8 @@ const useClients = () => {
     useEffect(() => {
         // Get the client ID and jwttoken from local storage
         const token = localStorage.getItem('jwttoken');
+        const id = localStorage.getItem('id');
+        const roleId = localStorage.getItem('roleId');
 
         // Define the API call function
         const getClient = async () => {
@@ -20,8 +22,13 @@ const useClients = () => {
 
                 // Make the API request to fetch client profile data
                 const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
-                const endpoint = '/clients';
+                let endpoint = '/clients';
+                if (id && roleId && roleId !== '1') {
+                    endpoint = `/clients&id=${id}`;
+                }
                 const url = `${baseURL}${endpoint}`;
+                console.log("------url", url)
+                debugger;
                 
                 const response = await axios.get(
                     url,

@@ -1,5 +1,6 @@
 "use client"; // Import as a client component since it uses state
 import { useState, useEffect } from "react";
+import { signOut } from "next-auth/react";
 import { useRouter } from "next/router";
 import { CgMenuRightAlt } from "react-icons/cg";
 import {
@@ -11,15 +12,21 @@ import {
     IoLogOutOutline,
     IoKeyOutline
 } from "react-icons/io5";
+import Link from "next/link";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 import { useTheme } from "../../../context/ThemeContext";
 import styles from "./Sidebar.module.scss";
 import { useFetchMenuPermissions } from "../../../hooks/permissions";
 
+const DynamicIcon = ({ icon: Icon }) => <Icon className={styles.icon} />;
+
 const Sidebar = ({ collapsed, setCollapsed }) => {
-    const { menuPermissions, loading, error } = useFetchMenuPermissions();
+    const { menuPermissions, loading: menuLoading, error } = useFetchMenuPermissions();
     const router = useRouter();
     const { pathname } = router; // Get the current path
-    const { isDarkMode } = useTheme();
+    const { theme, isDarkMode } = useTheme();
+    const [loading, setLoading] = useState(true);
 
     const [userRoleId, setUserRoleId] = useState(null);
 
@@ -36,20 +43,37 @@ const Sidebar = ({ collapsed, setCollapsed }) => {
     ? menuPermissions.filter(menu => menu.ROLES.some(role => role.ROLE_ID === userRoleId && role.HAS_ACCESS === 1))
     : [];
 
-
     const isActive = (href) => (pathname === href ? styles.active : "");
-    const handleNavigation = (path) => router.push(path);
 
-    // Map icons to menu names
-    const menuIcons = {
-        Dashboard: <IoSpeedometerOutline className={styles.icon} />,
-        Users: <IoPeopleOutline className={styles.icon} />,
-        Clients: <IoPersonOutline className={styles.icon} />,
-        "Client Projects": <IoBriefcaseOutline className={styles.icon} />,
-        "Project Tasks": <IoBriefcaseOutline className={styles.icon} />,
-        "Scheduled Tasks": <IoCalendarOutline className={styles.icon} />,
-        Permissions: <IoKeyOutline className={styles.icon} />,
+    const handleSignout = async (path) => {
+        localStorage.clear();
+        await signOut({ redirect: false });
+        router.push(path);
     };
+
+    useEffect(() => {
+        // Simulate loading only on the first site load
+        const firstLoad = localStorage.getItem("firstLoad");
+        if (!firstLoad) {
+            localStorage.setItem("firstLoad", "true");
+            const timer = setTimeout(() => setLoading(false), 2000); // Simulate 2s loading
+            return () => clearTimeout(timer);
+        } else {
+            setLoading(false);
+        }
+    }, []);
+
+    // Map icons to menu names (store component references, not JSX)
+    const menuIcons = {
+        Dashboard: IoSpeedometerOutline,
+        Users: IoPeopleOutline,
+        Clients: IoPersonOutline,
+        "Client Projects": IoBriefcaseOutline,
+        "Project Tasks": IoBriefcaseOutline,
+        "Scheduled Tasks": IoCalendarOutline,
+        Permissions: IoKeyOutline,
+    };
+
 
     // Utility function to format menu names into paths
     const formatPath = (menuName) => {
@@ -59,11 +83,31 @@ const Sidebar = ({ collapsed, setCollapsed }) => {
         .join("");
     };
 
+    if (loading) {
+        // Show Skeleton Loader while loading
+        return (
+            <aside className={styles.sidebar}>
+                <div className={styles.logoContainer}>
+                    <Skeleton height={32} width="100%" />
+                </div>
+                <div className={styles.menuContainer}>
+                    <ul className={styles.menuItems}>
+                        {[...Array(7)].map((_, i) => (
+                            <li key={i} className={styles.skeletonMenuItem}>
+                                <Skeleton height={40} width="90%" />
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            </aside>
+        );
+    }
+
     return (
         <aside
-            className={`${styles.sidebar} ${collapsed ? styles.collapsed : ""} ${
-                isDarkMode ? styles.darkMode : styles.lightMode
-            }`}
+            className={`${styles.sidebar} ${
+                collapsed ? styles.collapsed : ""
+            } ${theme === "system" ? styles.systemMode : isDarkMode ? styles.darkMode : styles.lightMode}`}
         >
             <div className={styles.logoContainer}>
                 <div className={styles.logo}>
@@ -96,35 +140,43 @@ const Sidebar = ({ collapsed, setCollapsed }) => {
             </div>
 
             {/* Loader or Error State */}
-            {(loading || !userRoleId) && (
+            {/* {(loading || !userRoleId) && (
                 <div className={styles.loaderContainer}>
                     <p>Loading Sidebar...</p>
                 </div>
-            )}
-            {error && (
+            )} */}
+            {/* {error && (
                 <div className={styles.errorContainer}>
                     <p>Error loading menu permissions.</p>
                 </div>
-            )}
+            )} */}
 
             {/* Menu Rendering */}
-            {!loading && userRoleId && (
+            {!menuLoading && userRoleId && (
                 <div className={styles.menuContainer}>
                     <ul className={styles.menuItems}>
                         {filteredMenus.map((menu) => {
                             const path = `/${formatPath(menu.MENU_NAME)}`;
                             return (
-                                <li
-                                    key={menu.MENU_ID}
-                                    className={`${styles.menuItem} ${isActive(path)}`}
-                                    onClick={() => handleNavigation(path)}
-                                >
-                                    {menuIcons[menu.MENU_NAME]} {!collapsed && menu.MENU_NAME}
+                                <li key={menu.MENU_ID}>
+                                    <Link
+                                        href={path}
+                                        className={`${styles.menuItem} ${isActive(path)}`}
+                                    >
+                                        <DynamicIcon icon={menuIcons[menu.MENU_NAME]} /> <span>{menu.MENU_NAME}</span>
+                                    </Link>
                                 </li>
                             );
                         })}
-                        <li className={styles.menuItem} onClick={() => handleNavigation("/Auth")}>
-                            <IoLogOutOutline className={styles.icon} /> {!collapsed && "Logout"}
+
+                        <li>
+                            <Link
+                                href="/Auth"
+                                className={`${styles.menuItem} ${isActive("/Auth")}`}
+                                onClick={() => handleSignout("/Auth")}
+                            >
+                                <DynamicIcon icon={IoLogOutOutline} /> <span>{"Logout"}</span>
+                            </Link>
                         </li>
                     </ul>
                 </div>

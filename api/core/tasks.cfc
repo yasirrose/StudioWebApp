@@ -1,7 +1,9 @@
 <cfcomponent name="coreTasks" output="false">
 
     <cffunction access="public" name="getTasks" returntype="array">
-        <cfargument name="clientId" type="any" required="false" default="">
+        <cfargument name="id" type="any" required="false" default="">
+        <cfargument name="client_id" type="any" required="false" default="">
+        <cfargument name="assignee_id" type="any" required="false" default="">
 
         <cftry>
             <!-- SQL query that joins the projects table to get project name information -->
@@ -16,9 +18,16 @@
                 LEFT JOIN projects ON tasks.project_id = projects.project_id
                 LEFT JOIN users ON tasks.assigned_to = users.user_id
                 LEFT JOIN task_statuses ON tasks.status_id = task_statuses.status_id
+                LEFT JOIN clients ON projects.client_id = clients.client_id
                 WHERE 0=0
-                <cfif len(arguments.clientId) GT 0>
-                    AND projects.client_id = <cfqueryparam value="#arguments.clientId#" cfsqltype="cf_sql_integer">
+                <cfif len(arguments.client_id) GT 0>
+                    AND projects.client_id = <cfqueryparam value="#arguments.client_id#" cfsqltype="cf_sql_integer">
+                </cfif>
+                <cfif len(arguments.id) GT 0>
+                    AND clients.client_main_id = <cfqueryparam value="#arguments.id#" cfsqltype="cf_sql_integer">
+                </cfif>
+                <cfif len(arguments.assignee_id) GT 0>
+                    AND tasks.assigned_to = <cfqueryparam value="#arguments.assignee_id#" cfsqltype="cf_sql_integer">
                 </cfif>
                 ORDER BY tasks.updated_at DESC
             </cfquery>

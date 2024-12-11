@@ -1,8 +1,7 @@
 <cfcomponent extends="taffy.core.resource" taffy_uri="/projects" taffy:docs:name="user.all">
 
     <cffunction name="projects" taffy:verb="get" access="public" output="false" hint="">
-        <!-- Make clientID optional by setting required="false" and defaulting to an empty string -->
-        <cfargument name="client_id" type="any" required="false" default="" />
+        <cfargument name="id" type="any" required="false" default="" />
 
         <!--- <cfset jwtObj = createObject("component", "core.jwt")>
 		<cfset jwtData = jwtObj.validateJwt()>
@@ -15,7 +14,7 @@
         <cfset core_project = createObject("component","core.projects")>
         
         <!-- Get projects based on whether client ID is provided or not -->
-        <cfset projectsData = core_project.getProjectsData(arguments.client_id)>
+        <cfset projectsData = core_project.getProjectsData(arguments.id)>
 
         <cfreturn rep(projectsData).withStatus(200) />
     </cffunction>

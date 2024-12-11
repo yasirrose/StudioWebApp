@@ -1,90 +1,88 @@
 .darkMode {
     background-color: #2c2c2c;
     color: #f0f0f0;
-}
-
-.lightMode {
+  }
+  
+  .lightMode {
     background-color: #ffffff;
     color: #333333;
-}
-
-.badge-light-success {
+  }
+  
+  .badge-light-success {
     color: #155724;
     background-color: #d4edda;
     padding: 4px 8px;
     border-radius: 4px;
-}
-
-.badge-light-danger {
+  }
+  
+  .badge-light-danger {
     color: #721c24;
     background-color: #f8d7da;
     padding: 4px 8px;
     border-radius: 4px;
-}
-
-.table {
-    margin: 0;
+  }
+  
+  .table {
+    margin: 0 !important;
     width: 100%;
     border-collapse: collapse;
-
-    th, td {
-        padding: 8px 12px;
-        text-align: center;
-        border: 1px solid #ddd;
-    }
-
-    thead {
-        background-color: #f4f4f4;
-    }
-}
-
-
-
-.darkTable {
+    border: 0;
+      tr{
+          border: 0;
+          border-bottom: 1px dashed #f1f1f4 !important;
+          th,
+          td {
+              padding: 8px 12px;
+              border: 0;
+          }
+      } 
+  }
+  
+  .darkTable {
     color: #ccc; // Gray text color for dark mode
-    background-color: #1e1e2d; // Optional: Background for table in dark mode
-
+    background-color: #15171c; // Optional: Background for table in dark mode
+    .table {
+          tr{
+              border-bottom: 1px dashed #26272f !important;
+          } 
+    }
     th,
     td {
-        color: #ccc; // Gray text for headers and cells
-        border-color: #444; // Dark gray for table borders
+      color: #ccc; // Gray text for headers and cells
+      border-color: #444; // Dark gray for table borders
     }
-
-    thead th {
-        border-bottom: 2px solid #555; // Slightly darker border for header
-    }
-
+  
     tbody tr {
-        &:hover {
-            background-color: #292938; // Slight hover effect for dark mode
-        }
+      &:hover {
+        background-color: #292938; // Slight hover effect for dark mode
+      }
     }
-
+  
     .form-check-input {
-        border: 2px solid #6c757d; // Gray border for checkboxes in dark mode
-        background-color: transparent;
-
-        &:checked {
-            background-color: #28a745; // Green background for selected state
-            border-color: #28a745; // Green border for selected state
-        }
-    }
-
-    .form-check-label {
-        color: #ccc; // Ensure labels match the table text color
-    }
-}
-.darkMode .page-title {
-    color: #ffffff !important; // Force white color for dark mode
-}
-
-
-.darkTable .form-check-input {
-    border: 2px solid #6c757d; // Gray border for checkboxes in dark mode
-    background-color: transparent;
-
-    &:checked {
+      border: 2px solid #6c757d; // Gray border for checkboxes in dark mode
+      background-color: transparent;
+  
+      &:checked {
         background-color: #28a745; // Green background for selected state
         border-color: #28a745; // Green border for selected state
+      }
     }
-}
+  
+    .form-check-label {
+      color: #ccc; // Ensure labels match the table text color
+    }
+  }
+  .darkMode .page-title {
+    color: #ffffff !important; // Force white color for dark mode
+  }
+  
+  .darkTable .form-check-input {
+    border: 2px solid #6c757d; // Gray border for checkboxes in dark mode
+    background-color: transparent;
+  
+    &:checked {
+      background-color: #28a745; // Green background for selected state
+      border-color: #28a745; // Green border for selected state
+    }
+  }
+  

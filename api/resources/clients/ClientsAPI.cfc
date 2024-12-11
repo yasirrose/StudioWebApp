@@ -1,7 +1,9 @@
 <cfcomponent extends="taffy.core.resource" taffy_uri="/clients" taffy:docs:name="clients">
 
 	<cffunction name="clientProfile" taffy:verb="get" access="public" output="true" hint="">
-		<cfargument name="client_id" type="any" required="false" hint="" />
+		<cfargument name="id" type="any" required="false" hint="" />
+        <cflog text="<--core---permissions-id--> #arguments.id#" type="info">
+
 		<!--- <cfset jwtObj = createObject("component", "core.jwt")>
 		<cfset jwtData = jwtObj.validateJwt()>
 
@@ -12,8 +14,8 @@
 
         <cfset clientService = createObject("component","core.clients")>
 		
-        <cfif len(arguments.client_id) GT 0>
-            <Cfset clientsData = clientService.getClientsData(arguments.client_id)>
+        <cfif len(arguments.id) GT 0>
+            <Cfset clientsData = clientService.getClientsData(arguments.id)>
         <cfelse>
             <Cfset clientsData = clientService.getClientsData()>
         </cfif>
