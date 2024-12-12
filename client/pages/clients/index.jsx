@@ -50,8 +50,6 @@ const Clients = () => {
     // If the fetched clients list is available, update the local clients state
     useEffect(() => {
         if (Clients){
-    const paginatedClients = Clients.slice(startIndex, startIndex + rowsPerPage);
-
             setClients(Clients);
         } 
     }, [Clients]);
