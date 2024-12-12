@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { signOut } from 'next-auth/react'; // Import signOut from next-auth
 import api from '/utils/api';
 import { toast } from 'react-toastify';
 
@@ -54,7 +55,17 @@ const useUpdateMenuPermission = () => {
         
         try {
             if (!userId || !token) {
+                signOut();
                 throw new Error('User ID or Token is missing');
+            }
+
+            if (token) {
+                getMenuPermissions();
+            } else {
+                console.warn('Token is missing, signing out...');
+                setError('Token is missing');
+                setLoading(false);
+                signOut(); // Call the NextAuth signOut function
             }
 
             const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;

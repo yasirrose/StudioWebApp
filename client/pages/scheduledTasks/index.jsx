@@ -55,12 +55,12 @@ export default function CalendarPage() {
                                             {isAuthenticated ? 'Scheduled Tasks' : 'Calendar'}
                                         </h2>
                                         {!isAuthenticated && <div className="card-toolbar d-flex gap-3">
-                                            <button
+                                            {/* <button
                                                 className="btn btn-flex btn-primary"
                                                 onClick={handleAddEventModalToggle}
                                             >
                                                 <FaPlus className="me-1" /> Add Event
-                                            </button>
+                                            </button> */}
                                         </div>}
                                         {/* <div className="card-toolbar d-flex gap-3">
                                             <button

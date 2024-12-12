@@ -27,8 +27,6 @@ const useClients = () => {
                     endpoint = `/clients&id=${id}`;
                 }
                 const url = `${baseURL}${endpoint}`;
-                console.log("------url", url)
-                debugger;
                 
                 const response = await axios.get(
                     url,

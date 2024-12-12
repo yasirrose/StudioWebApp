@@ -58,7 +58,7 @@ const Users = () => {
     const filteredUsers = users.filter(user => 
         (user.first_name + ' ' + user.last_name).toLowerCase().includes(searchTerm.toLowerCase())
     );
-
+    const [openDropdownId, setOpenDropdownId] = useState(null);
     const handleNavigation = (path, user_id) => {
         router.push(path)
     };
@@ -116,47 +116,78 @@ const Users = () => {
             sortable: true,
         },
         {
-        name: 'Actions',
-        cell: row => (
-            <div className={styles.dropdown}>
-                <button className={`${styles.dropdownButton} ${isDarkMode ? styles.darkButton : styles.lightButton}`}>
-                Actions <FaChevronDown className={styles.dropdownIcon} />
-                </button>
-                <div className={`${styles.dropdownContent} ${isDarkMode ? styles.darkDropdown : styles.lightDropdown}`}>
-                    <button
-                        className={`${styles.viewButton} ${isDarkMode ? styles.darkViewButton : styles.lightViewButton}`}
-                        onClick={() => handleNavigation(`/userProfile?id=${row.user_id}&isEditProfile=false`, row.user_id)}
-                    >
-                        View Profile
-                    </button>
-                    { canEditUser && (
-                        <button
-                            className={`${styles.viewButton} ${isDarkMode ? styles.darkViewButton : styles.lightViewButton}`}
-                            onClick={() => handleNavigation(`/userProfile?id=${row.user_id}&isEditProfile=true`, row.user_id)}
+            name: "Actions",
+            cell: row => {
+
+                useEffect(() => {
+                    const handleOutsideClick = (event) => {
+                        if (!event.target.closest(`#dropdown-${row.user_id}`)) {
+                            // setIsOpen(false);
+                            setOpenDropdownId(null);
+                        }
+                    };
+        
+                    document.addEventListener('click', handleOutsideClick);
+                    return () => document.removeEventListener('click', handleOutsideClick);
+                }, [row.user_id]);
+
+                return (
+                    <div
+                        id={`dropdown-${row.user_id}`}
+                        className={styles.dropdown}
+                        onClick={e => e.stopPropagation()}
                         >
-                            Edit Profile
-                        </button>
-                    )}
-                    { canDeleteUser && (
                         <button
-                            className={`${styles.deleteButton} ${isDarkMode ? styles.darkDeleteButton : styles.lightDeleteButton}`}
-                            onClick={() => deleteUser(row.user_id, setUsers)}
+                            className={`${styles.dropdownButton} ${
+                            isDarkMode ? styles.darkButton : styles.lightButton
+                            }`}
+                            onClick={() =>
+                            setOpenDropdownId(prevId => (prevId === row.user_id ? null : row.user_id))
+                            }
                         >
-                            Delete
+                            Actions <FaChevronDown className={styles.dropdownIcon} />
                         </button>
-                    )}
-                    { canEditUser && (
-                        <button
-                            className={`${row.user_active ? styles.deactivateButton : styles.activateButton} ${isDarkMode ? styles.darkToggleButton : styles.lightToggleButton}`}
-                            onClick={() => activateDeactivateUser(row.user_id, row.user_active ? 0 : 1, setUsers)}
-                        >
-                            {row.user_active ? 'Deactivate' : 'Activate'}
-                        </button>
-                    )}
-                </div>
-            </div>
-        ),
-        },
+                        {openDropdownId === row.user_id && (
+                            <div className={`${styles.dropdownContent} ${isDarkMode ? styles.darkDropdown : styles.lightDropdown}`}>
+                                <button
+                                    className={`${styles.viewButton} ${isDarkMode ? styles.darkViewButton : styles.lightViewButton}`}
+                                    onClick={() => handleNavigation(`/userProfile?id=${row.user_id}&isEditProfile=false`, row.user_id)}
+                                >
+                                    View Profile
+                                </button>
+                                { canEditUser && (
+                                    <button
+                                        className={`${styles.viewButton} ${isDarkMode ? styles.darkViewButton : styles.lightViewButton}`}
+                                        onClick={() => handleNavigation(`/userProfile?id=${row.user_id}&mode=edit&isEditProfile=true`, row.user_id)}
+                                    >
+                                        Edit Profile
+                                    </button>
+                                )}
+                                { canDeleteUser && (
+                                    <button
+                                        className={`${styles.deleteButton} ${isDarkMode ? styles.darkDeleteButton : styles.lightDeleteButton}`}
+                                        onClick={() => handleDelete(row.user_id, setUsers)}
+                                    >
+                                        Delete
+                                    </button>
+                                )}
+                                { canEditUser && (
+                                    <button
+                                        className={`${row.user_active ? styles.deactivateButton : styles.activateButton} ${isDarkMode ? styles.darkToggleButton : styles.lightToggleButton}`}
+                                        onClick={() => {
+                                            setOpenDropdownId(null);
+                                            activateDeactivateUser(row.user_id, row.user_active ? 0 : 1, setUsers);
+                                        }}
+                                    >
+                                        {row.user_active ? 'Deactivate' : 'Activate'}
+                                    </button>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                );
+            },
+        }
     ];
 
     const [collapsed, setCollapsed] = useState(false);

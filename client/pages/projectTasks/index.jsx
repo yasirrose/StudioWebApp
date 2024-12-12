@@ -39,8 +39,7 @@ const Tasks = () => {
     const { Statuses, loading:loadingStatuses } = useFetchStatuses();
     const { Tasks: allTasks, loading, error, setTasks } = useTasks();
     const { actionPermissions } = useFetchActionPermissions();
-
-
+    const [openDropdownId, setOpenDropdownId] = useState(null);
 
     const handleProjectFilterChange = (e) => {
         console.log("----E = ", e);
@@ -172,18 +171,54 @@ const Tasks = () => {
             sortable: true,
         },
         {
-            name: 'Actions',
-            cell: row => (
-                <div className={`${styles.dropdown} ${isDarkMode ? styles.darkDropdown : styles.lightDropdown}`}>
-                    <button className={`${styles.dropdownButton} ${isDarkMode ? styles.darkButton : styles.lightButton}`}>Actions <FaChevronDown className={styles.dropdownIcon} /> </button>
-                    { canEditTask && (
-                        <div className={`${styles.dropdownContent} ${isDarkMode ? styles.darkDropdown : styles.lightDropdown}`}>
-                            <button data-bs-toggle="modal" data-bs-target="#kt_modal_add_task" onClick={() => handleEditTask(row)}>Edit Task</button>
-                        </div>
-                    )}
-                </div>
-            ),
-        },
+            name: "Actions",
+            cell: row => {
+        
+                useEffect(() => {
+                    const handleOutsideClick = (event) => {
+                        if (!event.target.closest(`#dropdown-${row.task_id}`)) {
+                            setOpenDropdownId(null);
+                        }
+                    };
+        
+                    document.addEventListener('click', handleOutsideClick);
+                    return () => document.removeEventListener('click', handleOutsideClick);
+                }, [row.task_id]);
+        
+                return (
+                    <div
+                        id={`dropdown-${row.task_id}`}
+                        className={`${styles.dropdown} ${isDarkMode ? styles.darkDropdown : styles.lightDropdown}`}
+                        onClick={e => e.stopPropagation()}
+                    >
+                        <button
+                            className={`${styles.dropdownButton} ${
+                                isDarkMode ? styles.darkButton : styles.lightButton
+                            }`}
+                            onClick={() =>
+                                setOpenDropdownId(prevId => (prevId === row.task_id ? null : row.task_id))
+                            }
+                        >
+                            Actions <FaChevronDown className={styles.dropdownIcon} />
+                        </button>
+                        {openDropdownId === row.task_id && (
+                            <div className={`${styles.dropdownContent} ${isDarkMode ? styles.darkDropdown : styles.lightDropdown}`}>
+                                {canEditTask && (
+                                    <button
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#kt_modal_add_task"
+                                        onClick={() => handleEditTask(row)}
+                                    >
+                                        Edit Task
+                                    </button>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                );
+            },
+        }
+        
     ];
 
     const [collapsed, setCollapsed] = useState(false);

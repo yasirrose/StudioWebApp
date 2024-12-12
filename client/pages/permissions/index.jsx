@@ -99,7 +99,7 @@ const PermissionsPage = () => {
     };
 
     // Render Permission Cell with Editable Checkbox
-    const renderPermissionCell = (isAllowed, menuId, roleId, onChangeHandler) => (
+    const renderPermissionCell = (isAllowed, menuId, roleId, onChangeHandler, isDisabled=false) => (
         <div className="form-group mb-0">
             <label className="form-check form-check-custom form-check-solid">
                 <input
@@ -107,6 +107,7 @@ const PermissionsPage = () => {
                     className="form-check-input"
                     checked={isAllowed}
                     onChange={() => onChangeHandler(menuId, roleId, isAllowed)}
+                    disabled={isDisabled}
                 />
                 <span className="form-check-label"></span>
             </label>
@@ -157,6 +158,16 @@ const PermissionsPage = () => {
                                                                     const rolePermission = perm.ROLES.find(
                                                                         (r) => r.ROLE_NAME === role
                                                                     );
+                                                                    let isDisabled = false;
+                                                                    if (perm.MENU_NAME === "Dashboard") {
+                                                                        isDisabled = true;
+                                                                    } else if (perm.MENU_NAME === "Users" && role != "Super Admin") {
+                                                                        isDisabled = true;
+                                                                    } else if ((perm.MENU_NAME === "Clients" || perm.MENU_NAME === "Client Projects") && role === "Client User") {
+                                                                        isDisabled = true;
+                                                                    } else if (perm.MENU_NAME === "Permissions") {
+                                                                        isDisabled = true;
+                                                                    }
 
                                                                     return (
                                                                         <td key={`${index}-${role}`}>
@@ -164,7 +175,8 @@ const PermissionsPage = () => {
                                                                                 rolePermission?.HAS_ACCESS === 1,
                                                                                 perm.MENU_ID,
                                                                                 rolePermission?.ROLE_ID,
-                                                                                handlePagePermissionChange
+                                                                                handlePagePermissionChange,
+                                                                                isDisabled
                                                                             )}
                                                                         </td>
                                                                     );
@@ -200,13 +212,23 @@ const PermissionsPage = () => {
                                                                         (r) => r.ROLE_NAME === role
                                                                     );
 
+                                                                    let isDisabled = false;
+                                                                    if ((perm.ACTION_NAME.includes("Client") || perm.ACTION_NAME.includes("Project") || perm.ACTION_NAME.includes("User")) && role === "Client User") {
+                                                                        isDisabled = true;
+                                                                    } else if (perm.ACTION_NAME.includes("User") && role === "Admin") {
+                                                                        isDisabled = true;
+                                                                    } else if (role === "Super Admin") {
+                                                                        isDisabled = true;
+                                                                    }
+
                                                                     return (
                                                                         <td key={`${index}-${role}`}>
                                                                             {renderPermissionCell(
                                                                                 rolePermission?.HAS_ACCESS === 1,
                                                                                 perm.ACTION_ID,
                                                                                 rolePermission?.ROLE_ID,
-                                                                                handleActionPermissionChange
+                                                                                handleActionPermissionChange,
+                                                                                isDisabled
                                                                             )}
                                                                         </td>
                                                                     );

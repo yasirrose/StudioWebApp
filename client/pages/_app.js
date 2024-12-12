@@ -26,6 +26,7 @@ const AppInitializer = ({ setSession }) => {
 
     useEffect(() => {
         console.log("------in AppInitializer-----");
+        import("bootstrap/dist/js/bootstrap.bundle.min.js");
 
         let timer;
             const handleRouteChangeStart = () => {
@@ -52,7 +53,6 @@ const AppInitializer = ({ setSession }) => {
         router.events.off('routeChangeError', handleRouteChangeError);
         };
         
-        // import("bootstrap/dist/js/bootstrap.bundle.min.js");
         const initializeApp = async () => {
             setLoading(true);
 
@@ -106,7 +106,7 @@ export default function App({ Component, pageProps: { session, ...pageProps } })
 
             // Check permissions and redirect if access is denied
             if (menuPermissions && roleId) {
-                if (roleId === '1' && path === '/userProfile') {
+                if ((roleId === '1' && path === '/userProfile') || path === '/Auth') {
                     return true;
                 }
                 else if (!hasAccess(menuPermissions, path, roleId)) {

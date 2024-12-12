@@ -31,6 +31,12 @@ export const useEvents = () => {
         
         const mappedEvents = Tasks.map(task => {
             // Usage in events.jsx
+            // console.log("-IN MAPPED TASKS = ",task);
+            // if (task.task_start_date.length > 0) {
+            //     debugger
+            //     console.log("TASK START DATE IS NULL");
+            // }
+            
             const startDateTime = parseTaskDateTime(task.task_start_date, task.task_start_time);
             const endDateTime = parseTaskDateTime(task.task_end_date, task.task_end_time);
 

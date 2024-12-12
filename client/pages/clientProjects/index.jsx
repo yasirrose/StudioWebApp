@@ -37,6 +37,7 @@ const ClientProjects = () => {
     const [filteredProjects, setFilteredProjects] = useState([]);
     const [isFiltering, setIsFiltering] = useState(true);
     const [roleId, setRoleId] = useState(null);
+    const [openDropdownId, setOpenDropdownId] = useState(null);
 
 
     useEffect(() => {
@@ -152,30 +153,62 @@ const ClientProjects = () => {
             ),
         },        
         {
-            name: 'Actions',
-            cell: row => (
-                <div className={`${styles.dropdown} ${isDarkMode ? styles.darkDropdown : styles.lightDropdown}`}>
-                    <button className={`${styles.dropdownButton} ${isDarkMode ? styles.darkButton : styles.lightButton}`}>Actions <FaChevronDown className={styles.dropdownIcon} /></button>
-                    <div className={`${styles.dropdownContent} ${isDarkMode ? styles.darkDropdown : styles.lightDropdownContent}`}>
-                        { canEditProject && (
-                            <button className={`${styles.viewButton} ${isDarkMode ? styles.darkViewButton : styles.lightViewButton}`} data-bs-toggle="modal" data-bs-target="#kt_modal_add_project" onClick={() => handleEditProject(row)}>Edit Project</button>
-                        )}
-                        <button className={`${styles.viewButton} ${isDarkMode ? styles.darkViewButton : styles.lightViewButton}`} onClick={() => router.push(`/projectTasks?project_id=${row.project_id}`)}>View Tasks</button>
-                        { canDeleteProject && (
-                            <button className={`${styles.deleteButton} ${isDarkMode ? styles.darkDeleteButton : styles.lightDeleteButton}`} onClick={() => handleDelete(row.project_id, setProjects)}>Delete</button>
-                        )}
-                        { canEditProject && (
-                            <button
-                                className={`${row.user_active ? styles.deactivateButton : styles.activateButton} ${isDarkMode ? styles.darkToggleButton : styles.lightToggleButton}`}
-                                onClick={() => activateDeactivateProject(row.project_id, row.project_active ? 0 : 1, setProjects)}
-                            >
-                                {row.project_active ? 'Deactivate' : 'Activate'}
-                            </button>
+            name: "Actions",
+            cell: row => {
+
+                useEffect(() => {
+                    const handleOutsideClick = (event) => {
+                        if (!event.target.closest(`#dropdown-${row.project_id}`)) {
+                            setOpenDropdownId(null);
+                        }
+                    };
+        
+                    document.addEventListener('click', handleOutsideClick);
+                    return () => document.removeEventListener('click', handleOutsideClick);
+                }, [row.project_id]);
+
+                return (
+                    <div
+                        id={`dropdown-${row.project_id}`}
+                        className={`${styles.dropdown} ${isDarkMode ? styles.darkDropdown : styles.lightDropdown}`}
+                        onClick={e => e.stopPropagation()}
+                        >
+                        <button
+                            className={`${styles.dropdownButton} ${
+                            isDarkMode ? styles.darkButton : styles.lightButton
+                            }`}
+                            onClick={() =>
+                            setOpenDropdownId(prevId => (prevId === row.project_id ? null : row.project_id))
+                            }
+                        >
+                            Actions <FaChevronDown className={styles.dropdownIcon} />
+                        </button>
+                        {openDropdownId === row.project_id && (
+                            <div className={`${styles.dropdownContent} ${isDarkMode ? styles.darkDropdown : styles.lightDropdownContent}`}>
+                                { canEditProject && (
+                                    <button className={`${styles.viewButton} ${isDarkMode ? styles.darkViewButton : styles.lightViewButton}`} data-bs-toggle="modal" data-bs-target="#kt_modal_add_project" onClick={() => handleEditProject(row)}>Edit Project</button>
+                                )}
+                                <button className={`${styles.viewButton} ${isDarkMode ? styles.darkViewButton : styles.lightViewButton}`} onClick={() => router.push(`/projectTasks?project_id=${row.project_id}`)}>View Tasks</button>
+                                { canDeleteProject && (
+                                    <button className={`${styles.deleteButton} ${isDarkMode ? styles.darkDeleteButton : styles.lightDeleteButton}`} onClick={() => handleDelete(row.project_id, setProjects)}>Delete</button>
+                                )}
+                                { canEditProject && (
+                                    <button
+                                        className={`${row.user_active ? styles.deactivateButton : styles.activateButton} ${isDarkMode ? styles.darkToggleButton : styles.lightToggleButton}`}
+                                        onClick={() => {
+                                            setOpenDropdownId(null);
+                                            activateDeactivateProject(row.project_id, row.project_active ? 0 : 1, setProjects);
+                                        }}
+                                    >
+                                        {row.project_active ? 'Deactivate' : 'Activate'}
+                                    </button>
+                                )}
+                            </div>
                         )}
                     </div>
-                </div>
-            ),
-        },
+                );
+            },
+        }
     ];
 
     const [collapsed, setCollapsed] = useState(false);

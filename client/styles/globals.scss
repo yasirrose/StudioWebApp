@@ -404,6 +404,12 @@ button.btn.btn-danger:hover{
         }
       }
     }
+    select{
+      background-color: #26272f !important;
+      border-color: #26272f !important;
+      color: #9a9cae !important;
+      transition: color 0.2s ease;
+    }
     .modal-header, .modal-footer{
       border-color: #1e2027;
       .close-btn{

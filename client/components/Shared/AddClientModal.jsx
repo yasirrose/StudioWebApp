@@ -24,7 +24,7 @@ const AddClientModal = ({ addUpdateClient, Users, setClients, mode, clientData =
             setClientDefaultPage(clientData.client_default_page);
             setSelectedAdminId(clientData.client_main_id);
             setClientId(clientData.client_id);
-        } else {
+        } else if (mode === 'add') {
             // Reset fields for 'add' mode
             resetForm();
         }
@@ -85,7 +85,7 @@ const AddClientModal = ({ addUpdateClient, Users, setClients, mode, clientData =
     };
 
     return (
-        <div className="modal fade" id="kt_modal_add_customer" tabIndex="-1" aria-hidden="true">
+        <div className="modal fade" id="kt_modal_add_user" tabIndex="-1" aria-hidden="true">
             <div className="modal-dialog modal-dialog-centered mw-650px">
                 <div className="modal-content">
                     <div className="modal-header">

@@ -2,7 +2,7 @@
     
     <cffunction name="login_name_and_password" returntype="struct">
         <cfargument name="email" type="string" required="true">
-		<cfargument name="password" type="string" required="true">
+        <cfargument name="password" type="string" required="true">
 
         <cfset var response = structNew()>
         
@@ -17,67 +17,91 @@
                 roles ON users.role_id = roles.role_id
             WHERE 
                 users.email = <cfqueryparam value="#arguments.email#" cfsqltype="cf_sql_varchar">
-        </cfquery>        
+        </cfquery>
 
-        <!--- Validate password --->
-        <!---         <cfif getUser.recordCount EQ 1 AND comparePassword(arguments.password, getUser.password)> --->
-        <cfif getUser.recordCount NEQ 0>
-            <cfset response.success = true>
-            <cfset jwtObj = createObject("component", "jwt")>
-            
-            <!--- Add 3 hours to the current timestamp --->
-            <cfset threeHoursLater = dateAdd("h", 3, now())>
-            <!--- Convert the resulting datetime to seconds since epoch --->
-            <cfset jwtExpirationTime = dateDiff("s", now(), threeHoursLater)>
-            <cfset session.jwtExpirationTime = jwtExpirationTime>  
-            <cfset session.jwtExpirationDateTime = DateFormat(threeHoursLater, "YYYY-MM-dd") & " " & TimeFormat(threeHoursLater, "HH:MM:SS")>
+        <!--- Validate user existence and password --->
+        <cfif getUser.recordCount EQ 1>
+            <!--- Retrieve stored hashed password --->
+            <cfset var storedPassword = getUser.password>
+            <cfset var isPasswordValid = false>
 
-            <cfset keysToExtract = [
-                "JWTEXPIRATIONTIME",
-			    "JWTEXPIRATIONDATETIME"
-            ]>
-
-            <cfset extractedSession = StructNew() />
-
-            <cfloop array="#keysToExtract#" index="key">
-                <cfif StructKeyExists(session, key)>
-                    <cfset extractedSession[key] = session[key] />
+            <!--- Compare provided password with stored password --->
+            <cftry>
+            <!--- <cfif hash(arguments.password, "SHA-256") EQ storedPassword> --->
+                <cfif (arguments.password EQ storedPassword)>
+                    <cfset isPasswordValid = true>
                 </cfif>
-            </cfloop>
+            <cfcatch>
+                <cfset response.success = false>
+                <cfset response.message = "Error while verifying password.">
+                <cfset response.httpcode = 500>
+                <cfreturn response>
+            </cfcatch>
+            </cftry>
 
-            <cfset data = {
-                status: "SUCCESS",
-                name: "#getUser.first_name# #getUser.last_name#",
-                userID: "#getUser.user_id#",
-                roleID: "#getUser.role_id#",
-                email: "#getUser.email#",
-                role: "#getUser.user_role#",
-                sessions: "#extractedSession#",
-                httpcode: 200,
-		    }>
+            <!--- Check if password validation succeeded --->
+            <cfif isPasswordValid>
+                <cfset response.success = true>
+                <cfset jwtObj = createObject("component", "jwt")>
+                
+                <!--- Add 3 hours to the current timestamp --->
+                <cfset threeHoursLater = dateAdd("h", 3, now())>
+                <!--- Convert the resulting datetime to seconds since epoch --->
+                <cfset jwtExpirationTime = dateDiff("s", now(), threeHoursLater)>
+                <cfset session.jwtExpirationTime = jwtExpirationTime>  
+                <cfset session.jwtExpirationDateTime = DateFormat(threeHoursLater, "YYYY-MM-dd") & " " & TimeFormat(threeHoursLater, "HH:MM:SS")>
 
-            <cfset hashedData = jwtObj.encode( data, "HS256", "633c6deb-b5e9-40ad-85e8-63f14c4ba8c9" )>  
+                <cfset keysToExtract = [
+                    "JWTEXPIRATIONTIME",
+                    "JWTEXPIRATIONDATETIME"
+                ]>
 
-            <cfset returnData = {
-                status: "SUCCESS",
-                name: "#getUser.first_name# #getUser.last_name#",
-                userID: "#getUser.user_id#",
-                roleID: "#getUser.role_id#",
-                role: "#getUser.user_role#",
-                email: "#getUser.email#",
-                sessions: "#extractedSession#",
-                httpcode: 200,
-                jwt:hashedData
-		    }>
+                <cfset extractedSession = StructNew() />
 
-            <cfreturn returnData>
+                <cfloop array="#keysToExtract#" index="key">
+                    <cfif StructKeyExists(session, key)>
+                        <cfset extractedSession[key] = session[key] />
+                    </cfif>
+                </cfloop>
+
+                <cfset data = {
+                    status: "SUCCESS",
+                    name: "#getUser.first_name# #getUser.last_name#",
+                    userID: "#getUser.user_id#",
+                    roleID: "#getUser.role_id#",
+                    email: "#getUser.email#",
+                    role: "#getUser.user_role#",
+                    sessions: "#extractedSession#",
+                    httpcode: 200
+                }>
+
+                <cfset hashedData = jwtObj.encode(data, "HS256", "633c6deb-b5e9-40ad-85e8-63f14c4ba8c9")>  
+
+                <cfset returnData = {
+                    status: "SUCCESS",
+                    name: "#getUser.first_name# #getUser.last_name#",
+                    userID: "#getUser.user_id#",
+                    roleID: "#getUser.role_id#",
+                    role: "#getUser.user_role#",
+                    email: "#getUser.email#",
+                    sessions: "#extractedSession#",
+                    httpcode: 200,
+                    jwt: hashedData
+                }>
+
+                <cfreturn returnData>
+            <cfelse>
+                <cfset response.success = false>
+                <cfset response.message = "Invalid credentials.">
+                <cfset response.httpcode = 401>
+                <cfreturn response>
+            </cfif>
         <cfelse>
             <cfset response.success = false>
             <cfset response.message = "Invalid credentials.">
             <cfset response.httpcode = 401>
             <cfreturn response>
         </cfif>
-        
     </cffunction>
     
     <!---  Client login via PIN --->

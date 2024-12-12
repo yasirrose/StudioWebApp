@@ -70,34 +70,34 @@ const Profile = () => {
 
     const [collapsed, setCollapsed] = useState(false);
     const { isDarkMode } = useTheme();
-    console.log("-----isEditProfile = ", !isEditProfile);
-    console.log("-----isFiltering = ", isFiltering);
+    console.log("-----isEditProfile = ", isEditProfile);
+    console.log("-----isFiltering = ", !isFiltering);
     console.log("-----loading = ", !loading);
 
     return (
-        <>
-            <div className={`main-screen ${isDarkMode ? 'darkMode' : 'lightMode'}`}>
-                <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} />
-                <div className={`main-content ${collapsed ? 'collapsed' : ''}`}>
-                    <Header />
-                    {isToken && (
-                        <>
-                            { !isFiltering && isEditProfile && !loading && (
-                                <EditProfile 
-                                    profileData={isEditProfile && query?.mode === 'add' ? [] : filteredProfile} 
-                                    setProfileData={setFilteredProfile} 
-                                    setIsEditProfile={setIsEditProfile} 
-                                />
-                            )}
-                            { !isFiltering && !isEditProfile && !loading && (
-                                <UserProfile profileData={filteredProfile} loading={loading} error={error} setIsEditProfile={setIsEditProfile} />
-                            )}
-                            <Footer />
-                        </>
-                    )}
-                </div>
+        <div className={`main-screen ${isDarkMode ? 'darkMode' : 'lightMode'}`}>
+            <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} />
+            <div className={`main-content ${collapsed ? 'collapsed' : ''}`}>
+                <Header />
+                {loading ? (
+                    <div>Loading...</div>
+                ) : isEditProfile ? (
+                    <EditProfile
+                        profileData={query?.mode === 'add' ? [] : filteredProfile}
+                        setProfileData={setFilteredProfile}
+                        setIsEditProfile={setIsEditProfile}
+                    />
+                ) : (
+                    <UserProfile
+                        profileData={filteredProfile}
+                        loading={loading}
+                        error={error}
+                        setIsEditProfile={setIsEditProfile}
+                    />
+                )}
+                <Footer />
             </div>
-        </>
+        </div>
     );
 };
 

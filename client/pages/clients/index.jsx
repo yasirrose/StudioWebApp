@@ -4,7 +4,7 @@ import Footer from '../../components/common/Footer';
 import Sidebar from '../../components/common/Sidebar';
 import DataTable from 'react-data-table-component';
 import AddClientModal from '../../components/Shared/AddClientModal';
-import { FaChevronDown, FaSearch, FaPlus, FaFileExport } from 'react-icons/fa';
+import { FaChevronDown, FaSearch, FaPlus, FaFileExport, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { useClients, useAddUpdateClient, useDeleteClient, useActivateDeactivateClient } from '/hooks/clients';
 import styles from './client.module.scss';
 import { useRouter } from 'next/router';
@@ -14,6 +14,7 @@ import { useFetchUsers } from '/hooks/users';
 import Swal from 'sweetalert2';
 import { useTheme } from '../../context/ThemeContext';
 import { useFetchActionPermissions } from "../../hooks/permissions";
+import ReactPaginate from "react-paginate";
 
 const Clients = () => {
     const { Users, loading:loadingUsers } = useFetchUsers(); // Fetch users via the hook
@@ -22,7 +23,11 @@ const Clients = () => {
     const { activateDeactivateClient } = useActivateDeactivateClient(); // Hook for activation/deactivation
     const { addUpdateClient } = useAddUpdateClient(); // Hook for activation/deactivation
     const { actionPermissions } = useFetchActionPermissions();
-    
+    const [users, setUsers] = useState([]);
+    const [currentPage, setCurrentPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(5);
+    const startIndex = currentPage * rowsPerPage;
+    const [activeDropdown, setActiveDropdown] = useState(null);
     const [clients, setClients] = useState([]); // Initialize state for clients list
     const [searchTerm, setSearchTerm] = useState(''); // State for search input
     const [isModalOpen, setModalOpen] = useState(false);
@@ -31,9 +36,22 @@ const Clients = () => {
     const [roleId, setRoleId] = useState(null);
     const router = useRouter();
 
+    const handlePageChange = (selectedPage) => {
+        setCurrentPage(selectedPage.selected);
+      };
+      const handleDropdownToggle = (id) => {
+        setActiveDropdown(activeDropdown === id ? null : id);
+      };
+    
+      const handleRowsPerPageChange = (e) => {
+        setRowsPerPage(Number(e.target.value));
+        setCurrentPage(0); // Reset to the first page
+      };
     // If the fetched clients list is available, update the local clients state
     useEffect(() => {
         if (Clients){
+    const paginatedClients = Clients.slice(startIndex, startIndex + rowsPerPage);
+
             setClients(Clients);
         } 
     }, [Clients]);
@@ -88,10 +106,15 @@ const Clients = () => {
         });
     };
 
+    const [openDropdownId, setOpenDropdownId] = useState(null);
+
     // Filter clients based on the search term
     const filteredClients = clients.filter(client => 
         (client.first_name + ' ' + client.last_name).toLowerCase().includes(searchTerm.toLowerCase())
     );
+
+    const paginatedClients = clients.slice(startIndex, startIndex + rowsPerPage);
+
 
     // Define columns for DataTable
     const columns = [
@@ -126,14 +149,16 @@ const Clients = () => {
             ),
         },
         {
-            name: 'Actions',
+            name: "Actions",
             cell: row => {
-                const [isOpen, setIsOpen] = useState(false);
         
+                // const [isOpen, setIsOpen] = useState(false);
+                
                 useEffect(() => {
                     const handleOutsideClick = (event) => {
                         if (!event.target.closest(`#dropdown-${row.client_id}`)) {
-                            setIsOpen(false);
+                            // setIsOpen(false);
+                            setOpenDropdownId(null);
                         }
                     };
         
@@ -145,22 +170,24 @@ const Clients = () => {
                     <div
                         id={`dropdown-${row.client_id}`}
                         className={`${styles.dropdown} ${isDarkMode ? styles.darkDropdown : styles.lightDropdown}`}
-                        onClick={(e) => e.stopPropagation()} // Prevent event bubbling
-                    >
+                        onClick={e => e.stopPropagation()}
+                        >
                         <button
-                            className={`${styles.dropdownButton} ${isDarkMode ? styles.darkButton : styles.lightButton}`}
-                            onClick={() => setIsOpen(!isOpen)}
+                            className={`${styles.dropdownButton} ${
+                            isDarkMode ? styles.darkButton : styles.lightButton
+                            }`}
+                            onClick={() =>
+                                setOpenDropdownId(prevId => (prevId === row.client_id ? null : row.client_id))
+                            }
                         >
                             Actions <FaChevronDown className={styles.dropdownIcon} />
                         </button>
-                        {isOpen && (
-                            <div
-                                className={`${styles.dropdownContent} ${isDarkMode ? styles.darkDropdown : styles.lightDropdown}`}
-                            >
+                        {openDropdownId === row.client_id && (
+                            <div className={`${styles.dropdownContent} ${isDarkMode ? styles.darkDropdown : styles.lightDropdown}`}>
                                 <button
                                     className={`${styles.viewButton} ${isDarkMode ? styles.darkViewButton : styles.lightViewButton}`}
                                     onClick={() => {
-                                        setIsOpen(false);
+                                        // setIsOpen(false);
                                         router.push(`/clientProjects?client_id=${row.client_id}`);
                                     }}
                                 >
@@ -172,7 +199,7 @@ const Clients = () => {
                                         data-bs-toggle="modal"
                                         data-bs-target="#kt_modal_add_customer"
                                         onClick={() => {
-                                            setIsOpen(false);
+                                            // setIsOpen(false);
                                             openEditClientModal(row);
                                         }}
                                     >
@@ -183,7 +210,7 @@ const Clients = () => {
                                     <button
                                         className={`${styles.deleteButton} ${isDarkMode ? styles.darkDeleteButton : styles.lightDeleteButton}`}
                                         onClick={() => {
-                                            setIsOpen(false);
+                                            // setIsOpen(false);
                                             handleDelete(row.client_id, setClients);
                                         }}
                                     >
@@ -194,7 +221,8 @@ const Clients = () => {
                                     <button
                                         className={`${row.client_active ? styles.deactivateButton : styles.activateButton} ${isDarkMode ? styles.darkToggleButton : styles.lightToggleButton}`}
                                         onClick={() => {
-                                            setIsOpen(false);
+                                            // setIsOpen(false);
+                                            setOpenDropdownId(null);
                                             activateDeactivateClient(row.client_id, row.client_active ? 0 : 1, setClients);
                                         }}
                                     >
@@ -266,26 +294,56 @@ const Clients = () => {
                                                 <FaFileExport className="me-1" /> Export
                                             </button>
                                             { canAddClient && (
-                                                <button className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#kt_modal_add_customer" onClick={openAddClientModal}>
-                                                    <FaPlus className="me-1" /> Add New
-                                                </button>
+                                                <button
+                                                className="btn btn-primary"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#kt_modal_add_user"
+                                              >
+                                                <FaPlus className="me-1" /> Add New
+                                              </button>
                                             )}
                                         </div>
                                     </div>
                                     <div className="card-body pt-0">
                                         {loading ? (
-                                                <div>Loading...</div>
-                                            ) : error ? (
-                                                <div>Error: {error}</div>
-                                            ) : (
-                                            <DataTable
-                                                columns={columns}
-                                                data={filteredClients} // Use filtered clients here
-                                                paginationPerPage={5}
-                                                pagination
-                                                highlightOnHover
-                                                responsive
-                                            />
+                                            <div>Loading...</div>
+                                        ) : error ? (
+                                            <div>Error: {error}</div>
+                                        ) : (
+                                            <>
+                                                <DataTable
+                                                    columns={columns}
+                                                    data={paginatedClients}
+                                                    highlightOnHover
+                                                    responsive
+                                                    noHeader
+                                                />
+                                                <div className={styles.paginationContainer}>
+                                                    <select
+                                                        className={styles.pageDropdown}
+                                                        value={rowsPerPage}
+                                                        onChange={handleRowsPerPageChange}
+                                                    >
+                                                        {[5, 10, 15, 20].map((num) => (
+                                                            <option key={num} value={num}>
+                                                                {num}
+                                                            </option>
+                                                        ))}
+                                                    </select>
+                                                    <ReactPaginate
+                                                        previousLabel={<FaChevronLeft />}
+                                                        nextLabel={<FaChevronRight />}
+                                                        pageCount={Math.ceil(clients.length / rowsPerPage)}
+                                                        onPageChange={handlePageChange}
+                                                        containerClassName={styles.pagination}
+                                                        previousLinkClassName={styles.previous}
+                                                        nextLinkClassName={styles.next}
+                                                        activeClassName={styles.active}
+                                                        disabledClassName={styles.disabled}
+                                                        pageLinkClassName={styles.pageLink}
+                                                    />
+                                                </div>
+                                            </>
                                         )}
                                     </div>
                                 </div>
@@ -294,12 +352,10 @@ const Clients = () => {
                     </div>
                     {!loadingUsers && (
                         <AddClientModal
-                            mode={modalMode}
-                            clientData={selectedClient}
+                            addUpdateClient={addUpdateClient}
                             Users={Users}
                             setClients={setClients}
-                            addUpdateClient={addUpdateClient}
-                            onClose={closeModal}
+                            mode={modalMode}
                         />
                     )}
                     <Footer />
