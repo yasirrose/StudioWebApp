@@ -218,7 +218,7 @@ const PermissionsPage = () => {
                                                                     } else if (perm.ACTION_NAME.includes("User") && role === "Admin") {
                                                                         isDisabled = true;
                                                                     } else if (role === "Super Admin") {
-                                                                        isDisabled = true;
+                                                                        isDisabled = false;
                                                                     }
 
                                                                     return (

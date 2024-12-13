@@ -29,7 +29,7 @@
 		// 	validate:false, // default: false
 		// };
 
-		request.datasources = 'ipStudio'; 
+		request.datasources = 'ipstudio'; 
 
 		variables.framework = {};
 		variables.framework.debugKey = "debug";

@@ -26,7 +26,7 @@ const AddClientModal = ({ addUpdateClient, Users, setClients, mode, clientData =
             setClientId(clientData.client_id);
         } else if (mode === 'add') {
             // Reset fields for 'add' mode
-            resetForm();
+            // resetForm();
         }
     }, [mode, clientData]);
 
@@ -80,7 +80,7 @@ const AddClientModal = ({ addUpdateClient, Users, setClients, mode, clientData =
         };
 
         addUpdateClient(clientDataToSubmit, setClients);
-        document.querySelector("#kt_modal_add_customer .btn-close").click();
+        document.querySelector("#kt_modal_add_user .btn-close").click();
         resetForm();
     };
 

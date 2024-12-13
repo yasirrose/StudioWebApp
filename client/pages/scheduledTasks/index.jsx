@@ -62,14 +62,6 @@ export default function CalendarPage() {
                                                 <FaPlus className="me-1" /> Add Event
                                             </button> */}
                                         </div>}
-                                        {/* <div className="card-toolbar d-flex gap-3">
-                                            <button
-                                                className="btn btn-flex btn-primary"
-                                                onClick={handleAddEventModalToggle}
-                                            >
-                                                <FaPlus className="me-1" /> Add Event
-                                            </button>
-                                        </div> */}
                                     </div>
                                     <div className="card-body Scheduler">
                                         {  loading ? (

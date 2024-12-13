@@ -40,7 +40,11 @@ a {
   color: inherit;
   text-decoration: none;
 }
-
+ul{
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
 .btn.btn-primary {
   color: #fff;
   border-color: var(--bs-primary);
@@ -600,4 +604,33 @@ button.btn.btn-danger:hover{
   max-width: 20px;
   padding: 0;
   background-color: #fff;
+}
+
+.gJnpNS{
+  background-color: transparent !important;
+  min-height: 240px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+body .gJnpNS > span{
+  width: 38px !important;
+  max-width: 38px !important;
+}
+body .gJnpNS span span:nth-child(6),
+body .gJnpNS span span:nth-child(7),
+body .gJnpNS span span:nth-child(8),
+body .gJnpNS span span:nth-child(9){
+  display: none !important;
+}
+.sc-hbtGpV.ejfNUe {
+  text-align: center;
+  min-height: 240px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+aside {
+  display: none;
 }

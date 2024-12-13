@@ -21,7 +21,7 @@
     "dayjs": "^1.11.13",
     "jsonwebtoken": "^9.0.2",
     "leaflet": "^1.9.4",
-    "next": "14.2.15",
+    "next": "^15.1.0",
     "next-auth": "^4.24.8",
     "nprogress": "^0.2.0",
     "react": "^18",
@@ -37,7 +37,7 @@
     "react-paginate": "^8.2.0",
     "react-rating": "^2.0.5",
     "react-select": "^5.8.3",
-    "react-spinners": "^0.14.1",
+    "react-spinners": "^0.15.0",
     "react-time-picker": "^7.0.0",
     "react-toastify": "^10.0.6",
     "sass": "^1.80.1",
@@ -45,9 +45,10 @@
     "sweetalert2": "^11.14.5"
   },
   "devDependencies": {
+    "@types/bootstrap": "^5.2.10",
     "@types/node": "22.7.6",
     "@types/react": "18.3.11",
     "eslint": "^8",
-    "eslint-config-next": "14.2.15"
+    "eslint-config-next": "^14.2.15"
   }
 }

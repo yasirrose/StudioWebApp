@@ -27,8 +27,8 @@
 
             <!--- Compare provided password with stored password --->
             <cftry>
-            <!--- <cfif hash(arguments.password, "SHA-256") EQ storedPassword> --->
-                <cfif (arguments.password EQ storedPassword)>
+            <cfif hash(arguments.password, "SHA-256") EQ storedPassword>
+                <!--- <cfif (arguments.password EQ storedPassword)> --->
                     <cfset isPasswordValid = true>
                 </cfif>
             <cfcatch>

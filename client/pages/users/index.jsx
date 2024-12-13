@@ -11,7 +11,7 @@ import { useRouter } from 'next/router';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Swal from 'sweetalert2';
-import { GridLoader, ClimbingBoxLoader } from 'react-spinners';
+import { GridLoader } from 'react-spinners';
 import { useTheme } from '../../context/ThemeContext';
 import { useFetchActionPermissions } from "../../hooks/permissions";
 
@@ -142,7 +142,7 @@ const Users = () => {
                             isDarkMode ? styles.darkButton : styles.lightButton
                             }`}
                             onClick={() =>
-                            setOpenDropdownId(prevId => (prevId === row.user_id ? null : row.user_id))
+                                setOpenDropdownId(prevId => (prevId === row.user_id ? null : row.user_id))
                             }
                         >
                             Actions <FaChevronDown className={styles.dropdownIcon} />
@@ -259,7 +259,6 @@ const Users = () => {
                                                 highlightOnHover
                                                 responsive
                                                 progressPending={loading} // Show loading indicator while data is being fetched
-                                                // progressComponent={<div>Loading...</div>} // Custom loading component
                                                 progressComponent={<GridLoader color="#20e992" size={15} />}
                                             />
                                         {/* )} */}

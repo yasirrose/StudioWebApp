@@ -48,11 +48,11 @@ const AppInitializer = ({ setSession }) => {
         router.events.on('routeChangeError', handleRouteChangeError);
 
         return () => {
-        router.events.off('routeChangeStart', handleRouteChangeStart);
-        router.events.off('routeChangeComplete', handleRouteChangeComplete);
-        router.events.off('routeChangeError', handleRouteChangeError);
+            router.events.off('routeChangeStart', handleRouteChangeStart);
+            router.events.off('routeChangeComplete', handleRouteChangeComplete);
+            router.events.off('routeChangeError', handleRouteChangeError);
         };
-        
+
         const initializeApp = async () => {
             setLoading(true);
 

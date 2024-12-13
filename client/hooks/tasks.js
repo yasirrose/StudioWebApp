@@ -95,6 +95,9 @@ const useAddUpdateTask = () => {
             const url = `${baseURL}${endpoint}`;
             setLoading(true);
 
+            console.log("----taskData", taskData);
+            
+
             const response = await api.put(url, taskData, {
                 headers: { 'Content-Type': 'multipart/form-data', 'Authorization': `Bearer ${token}` }
             });

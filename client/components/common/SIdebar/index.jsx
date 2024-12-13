@@ -43,6 +43,12 @@ const Sidebar = ({ collapsed, setCollapsed }) => {
     ? menuPermissions.filter(menu => menu.ROLES.some(role => role.ROLE_ID === userRoleId && role.HAS_ACCESS === 1))
     : [];
 
+    // if (filteredMenus.length < 0) {
+    //     debugger;
+    // } else {
+
+    // }
+
     const isActive = (href) => (pathname === href ? styles.active : "");
 
     const handleSignout = async (path) => {
@@ -51,17 +57,17 @@ const Sidebar = ({ collapsed, setCollapsed }) => {
         router.push(path);
     };
 
-    useEffect(() => {
-        // Simulate loading only on the first site load
-        const firstLoad = localStorage.getItem("firstLoad");
-        if (!firstLoad) {
-            localStorage.setItem("firstLoad", "true");
-            const timer = setTimeout(() => setLoading(false), 2000); // Simulate 2s loading
-            return () => clearTimeout(timer);
-        } else {
-            setLoading(false);
-        }
-    }, []);
+    // useEffect(() => {
+    //     // Simulate loading only on the first site load
+    //     const firstLoad = localStorage.getItem("firstLoad");
+    //     if (!firstLoad) {
+    //         localStorage.setItem("firstLoad", "true");
+    //         const timer = setTimeout(() => setLoading(false), 2000); // Simulate 2s loading
+    //         return () => clearTimeout(timer);
+    //     } else {
+    //         setLoading(false);
+    //     }
+    // }, []);
 
     // Map icons to menu names (store component references, not JSX)
     const menuIcons = {
@@ -83,25 +89,25 @@ const Sidebar = ({ collapsed, setCollapsed }) => {
         .join("");
     };
 
-    if (loading) {
-        // Show Skeleton Loader while loading
-        return (
-            <aside className={styles.sidebar}>
-                <div className={styles.logoContainer}>
-                    <Skeleton height={32} width="100%" />
-                </div>
-                <div className={styles.menuContainer}>
-                    <ul className={styles.menuItems}>
-                        {[...Array(7)].map((_, i) => (
-                            <li key={i} className={styles.skeletonMenuItem}>
-                                <Skeleton height={40} width="90%" />
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            </aside>
-        );
-    }
+    // if (loading) {
+    //     // Show Skeleton Loader while loading
+    //     return (
+    //         <aside className={styles.sidebar}>
+    //             <div className={styles.logoContainer}>
+    //                 <Skeleton height={32} width="100%" />
+    //             </div>
+    //             <div className={styles.menuContainer}>
+    //                 <ul className={styles.menuItems}>
+    //                     {[...Array(7)].map((_, i) => (
+    //                         <li key={i} className={styles.skeletonMenuItem}>
+    //                             <Skeleton height={40} width="90%" />
+    //                         </li>
+    //                     ))}
+    //                 </ul>
+    //             </div>
+    //         </aside>
+    //     );
+    // }
 
     return (
         <aside
@@ -180,6 +186,22 @@ const Sidebar = ({ collapsed, setCollapsed }) => {
                         </li>
                     </ul>
                 </div>
+            )}
+            {menuLoading || !userRoleId && (
+                <>
+                <div className={styles.logoContainer}>
+                    <Skeleton height={32} width="100%" />
+                </div>
+                <div className={styles.menuContainer}>
+                    <ul className={styles.menuItems}>
+                        {[...Array(7)].map((_, i) => (
+                            <li key={i} className={styles.skeletonMenuItem}>
+                                <Skeleton height={40} width="90%" />
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+                </>
             )}
         </aside>
     );

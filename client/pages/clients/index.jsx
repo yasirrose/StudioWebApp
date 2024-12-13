@@ -38,15 +38,17 @@ const Clients = () => {
 
     const handlePageChange = (selectedPage) => {
         setCurrentPage(selectedPage.selected);
-      };
-      const handleDropdownToggle = (id) => {
+    };
+
+    const handleDropdownToggle = (id) => {
         setActiveDropdown(activeDropdown === id ? null : id);
-      };
-    
-      const handleRowsPerPageChange = (e) => {
+    };
+
+    const handleRowsPerPageChange = (e) => {
         setRowsPerPage(Number(e.target.value));
         setCurrentPage(0); // Reset to the first page
-      };
+    };
+
     // If the fetched clients list is available, update the local clients state
     useEffect(() => {
         if (Clients){
@@ -111,8 +113,7 @@ const Clients = () => {
         (client.first_name + ' ' + client.last_name).toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    const paginatedClients = clients.slice(startIndex, startIndex + rowsPerPage);
-
+    const paginatedClients = filteredClients.slice(startIndex, startIndex + rowsPerPage);
 
     // Define columns for DataTable
     const columns = [
@@ -195,7 +196,7 @@ const Clients = () => {
                                     <button
                                         className={`${styles.viewButton} ${isDarkMode ? styles.darkViewButton : styles.lightViewButton}`}
                                         data-bs-toggle="modal"
-                                        data-bs-target="#kt_modal_add_customer"
+                                        data-bs-target="#kt_modal_add_user"
                                         onClick={() => {
                                             // setIsOpen(false);
                                             openEditClientModal(row);
@@ -354,6 +355,7 @@ const Clients = () => {
                             Users={Users}
                             setClients={setClients}
                             mode={modalMode}
+                            clientData={selectedClient}
                         />
                     )}
                     <Footer />

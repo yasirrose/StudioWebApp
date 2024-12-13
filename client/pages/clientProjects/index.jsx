@@ -18,10 +18,10 @@ import { useFetchActionPermissions } from "../../hooks/permissions";
 const ClientProjects = () => {
     const router = useRouter();
     const client_id = router.query.client_id;
-    
+
     // const { Projects, loading, error } = useFetchProjects(client_id);
     const { Projects: allProjects, loading, error, setProjects } = useFetchProjects(); // Fetch tasks data
-    
+
     const { deleteProject } = useDeleteProject();
     const { activateDeactivateProject } = useActivateDeactivateProject();
     const { addUpdateProject } = useAddUpdateProject();
