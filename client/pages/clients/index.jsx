@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Header from '../../components/common/Header';
 import Footer from '../../components/common/Footer';
 import Sidebar from '../../components/common/Sidebar';
@@ -36,8 +36,8 @@ const Clients = () => {
     const [roleId, setRoleId] = useState(null);
     const router = useRouter();
 
-    const handlePageChange = (selectedPage) => {
-        setCurrentPage(selectedPage.selected);
+    const handlePageChange = ({ selected }) => {
+        setCurrentPage(selected);
     };
 
     const handleDropdownToggle = (id) => {
@@ -48,7 +48,9 @@ const Clients = () => {
         setRowsPerPage(Number(e.target.value));
         setCurrentPage(0); // Reset to the first page
     };
-
+    useEffect(() => {
+        setCurrentPage(0);
+    }, [searchTerm]);
     // If the fetched clients list is available, update the local clients state
     useEffect(() => {
         if (Clients){
@@ -108,12 +110,17 @@ const Clients = () => {
 
     const [openDropdownId, setOpenDropdownId] = useState(null);
 
-    // Filter clients based on the search term
-    const filteredClients = clients.filter(client => 
-        (client.first_name + ' ' + client.last_name).toLowerCase().includes(searchTerm.toLowerCase())
-    );
-
-    const paginatedClients = filteredClients.slice(startIndex, startIndex + rowsPerPage);
+    const filteredClients = useMemo(() => {
+        return clients.filter(client =>
+            (client.first_name + ' ' + client.last_name).toLowerCase().includes(searchTerm.toLowerCase())
+        );
+    }, [clients, searchTerm]);
+    
+    const totalPages = Math.ceil(filteredClients.length / rowsPerPage);
+    
+    const paginatedClients = useMemo(() => {
+        return filteredClients.slice(startIndex, startIndex + rowsPerPage);
+    }, [filteredClients, startIndex, rowsPerPage]);
 
     // Define columns for DataTable
     const columns = [
@@ -329,18 +336,23 @@ const Clients = () => {
                                                             </option>
                                                         ))}
                                                     </select>
-                                                    <ReactPaginate
-                                                        previousLabel={<FaChevronLeft />}
-                                                        nextLabel={<FaChevronRight />}
-                                                        pageCount={Math.ceil(clients.length / rowsPerPage)}
-                                                        onPageChange={handlePageChange}
-                                                        containerClassName={styles.pagination}
-                                                        previousLinkClassName={styles.previous}
-                                                        nextLinkClassName={styles.next}
-                                                        activeClassName={styles.active}
-                                                        disabledClassName={styles.disabled}
-                                                        pageLinkClassName={styles.pageLink}
-                                                    />
+                                                    {totalPages > 1 && (
+                                                        <ReactPaginate
+                                                            pageCount={totalPages}
+                                                            pageRangeDisplayed={2}
+                                                            marginPagesDisplayed={1}
+                                                            onPageChange={handlePageChange}
+                                                            containerClassName={styles.pagination}
+                                                            previousLinkClassName={styles.previous}
+                                                            nextLinkClassName={styles.next}
+                                                            activeClassName={styles.active}
+                                                            disabledClassName={styles.disabled}
+                                                            pageLinkClassName={styles.pageLink}
+                                                            previousLabel={<FaChevronLeft />}
+                                                            nextLabel={<FaChevronRight />}
+                                                            forcePage={currentPage}
+                                                        />
+                                                    )}
                                                 </div>
                                             </>
                                         )}

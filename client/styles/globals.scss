@@ -634,3 +634,47 @@ body .gJnpNS span span:nth-child(9){
 aside {
   display: none;
 }
+
+
+.light-dropdown .react-select__control {
+  background-color: white;
+  border: 1px solid #ccc;
+  color: #333;
+}
+
+.light-dropdown .react-select__menu {
+  background-color: white;
+  border: 1px solid #ccc;
+  color: #333;
+}
+
+.light-dropdown .react-select__option {
+  color: #333;
+  &:hover {
+      background-color: #f4f4f4;
+  }
+}
+
+/* Dark mode dropdown */
+.dark-dropdown .css-13cymwt-control, .dark-dropdown  .css-t3ipsp-control {
+  background: #1b1c22;
+  border-color: #1b1c22 !important;
+  color: #fff;
+}
+
+.dark-dropdown .react-select__menu {
+  background: #1b1c22 !important;
+  border-color: #1b1c22 !important;
+  color: #fff;
+}
+.dark-dropdown .css-1jqq78o-placeholder{
+  color: #fff;
+}
+
+.dark-dropdown .react-select__option {
+  background: #1b1c22 !important;
+  color: white;
+  &:hover {
+      background-color: #555;
+  }
+}

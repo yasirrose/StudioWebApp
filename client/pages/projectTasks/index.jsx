@@ -223,6 +223,43 @@ const Tasks = () => {
 
     const [collapsed, setCollapsed] = useState(false);
     const { isDarkMode } = useTheme();
+    const customStyles = {
+        control: (base, state) => ({
+          ...base,
+          background: isDarkMode ? "transparent" : "transparent",
+          width: "100%",
+          height: "38px",
+          border: isDarkMode ? "1px solid #33bcdb" : "1px solid #103f54",
+          boxShadow: state.isFocused ? null : null,
+          "&:hover": {
+            borderColor: state.isFocused ? null : null,
+          },
+        }),
+        menu: (base) => ({
+          ...base,
+          borderRadius: 0,
+          marginTop: 0,
+          backgroundColor: isDarkMode ? "#333" : "#fff",
+        }),
+        menuList: (base) => ({
+          ...base,
+          padding: 0,
+          backgroundColor: isDarkMode ? "#33bcdb" : "#fff",
+        }),
+        singleValue: (base) => ({
+          ...base,
+          color: isDarkMode ? "#fff" : "#566369",
+        }),
+        placeholder: (base) => ({
+          ...base,
+          padding: 0,
+          color: isDarkMode ? "#fff" : "#566369",
+        }),
+        dropdownIndicator: (base) => ({
+          ...base,
+          color: isDarkMode ? "#fff" : "#566369",
+        }),
+      };
 
     return (
         <div className={`main-screen ${isDarkMode ? 'darkMode' : 'lightMode'}`}>
@@ -266,37 +303,39 @@ const Tasks = () => {
                                             </div>
                                             <div className="status-filter ms-3 position-relative w-250px">
                                                 <Select
-                                                    className="custom-dropdown"
+                                                    
                                                     options={[
                                                         { value: null, label: 'Select Project' }, // "None" option represents no project selection
                                                         ...(Statuses && Statuses.length > 0 ? Statuses.map(status => ({
                                                             value: status.status_name,
                                                             label: status.status_name
-                                                        })) : []) // Only map if Statuses is not null or empty
+                                                        })) : [])
                                                     ]}
                                                     value={statusFilter ? { value: statusFilter, label: statusFilter } : null}
                                                     onChange={e => setStatusFilter(e.value)}
                                                     placeholder="Select Task Status"
                                                     isSearchable={true}
-                                                /> 
+                                                    styles={customStyles}
+                                                />
                                             </div>
 
                                             <div className="project-filter ms-3 position-relative w-250px">
                                                 <Select
-                                                    className="custom-dropdown"
                                                     options={[
-                                                        { value: null, label: 'Select Project' }, // "None" option represents no project selection
+                                                        { value: null, label: 'Select Project' },
                                                         ...(Projects && Projects.length > 0 ? Projects.map(project => ({
                                                             value: project.project_name,
                                                             label: project.project_name
-                                                        })) : []) // Only map if Projects is not null or empty
+                                                        })) : [])
                                                     ]}
                                                     value={projectFilter ? { value: projectFilter, label: projectFilter } : null}
                                                     onChange={handleProjectFilterChange}
                                                     placeholder="Select Project"
                                                     isSearchable={true}
+                                                    styles={customStyles}
                                                 />
                                             </div>
+
                                         </div>
                                         <div className="card-toolbar d-flex gap-3">
                                             <button className="btn btn-light-primary">
